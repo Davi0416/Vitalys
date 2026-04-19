@@ -12,8 +12,8 @@ O **Vitalys** é um sistema desenvolvido para centralizar o controle de paciente
 
 ## Tecnologias
 
-- **Backend:** Java
-- **Frontend:** a definir
+- **Backend:** Java com Spring Boot
+- **Frontend:** a definir (desenvolvido por terceiros)
 
 ---
 
@@ -69,13 +69,34 @@ Inicio
 
 ## Estrutura do projeto
 
+O projeto é dividido em dois repositórios separados — um para cada parte da equipe.
+
+**Backend (vitalys-backend):**
 ```
-vitalys/
-├── README.md
-├── src/          # codigo fonte Java (backend)
-├── database/     # scripts e migrations
-├── docs/         # documentacao e especificacoes
-└── tests/        # testes automatizados
+vitalys-backend/
+├── src/
+│   └── main/
+│       ├── java/
+│       │   └── com/vitalys/
+│       │       ├── controller/   # recebe as requisições (ex: AgendamentoController)
+│       │       ├── service/      # regras de negócio (ex: AgendamentoService)
+│       │       ├── model/        # entidades (Paciente, Profissional...)
+│       │       └── repository/   # acesso ao banco de dados
+│       └── resources/
+│           └── application.properties  # configurações (banco, porta...)
+├── database/
+│   └── migrations/   # scripts SQL de criação das tabelas
+└── README.md
+```
+
+**Frontend (vitalys-frontend):**
+```
+vitalys-frontend/
+├── src/
+│   ├── pages/        # telas (Login, Menu, Pacientes...)
+│   ├── components/   # partes reutilizáveis (botões, tabelas...)
+│   └── services/     # chamadas para a API do backend
+└── README.md
 ```
 
 ---
