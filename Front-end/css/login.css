@@ -1,3 +1,103 @@
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px var(--side-padding, 5%);
+    border-bottom: 1px solid var(--border);
+    background-color: var(--background-surface);
+}
+
+header span {
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.logoClinica {
+    height: 50px; 
+    width: auto;
+    object-fit: contain;
+}
+
+
 body{
-    background-color: gray;
+    background-color: var(--background-page);
+    color: var(--text-primary);
+    margin: 0;
+    display: flex;
+    flex-direction: column; /* Coloca header em cima e main embaixo */
+    min-height: 100vh;
+}
+
+main {
+    display: flex;
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center;     /* Centraliza verticalmente */
+    flex-grow: 1;            /* Faz o main "esticar" para preencher a tela */
+}
+
+.login {
+    background-color: var(--background-surface);
+    padding: 40px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    width: 100%;
+    max-width: 400px; /* Largura máxima do card de login */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+.login h1 {
+    margin-bottom: 24px;
+    text-align: center;
+    font-size: 2rem;
+}
+
+.login form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Cria um espaço igual entre cada campo */
+}
+
+.login input {
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background-color: var(--background-page);
+    color: var(--text-primary);
+    outline: none;
+}
+
+.login input:focus {
+    border-color: var(--color-primary); /* Mostra onde o usuário está digitando */
+}
+
+.login-actions {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.link-forgot {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    text-decoration: none;
+}
+
+.link-forgot:hover {
+    color: var(--color-primary-light);
+    text-decoration: underline;
+}
+
+.botaoEntrar {
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+}
+.botaoEntrar:hover {
+  background: var(--color-primary-dark);
+  cursor: pointer;
 }
