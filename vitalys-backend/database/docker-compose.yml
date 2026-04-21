@@ -1,0 +1,20 @@
+services:
+  mysql_knex:
+    image: mysql:9.6
+    container_name: vitalys_mysql
+    restart: always
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: admin16
+      MYSQL_DATABASE: base_de_dados_vitalys
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin16
+      TZ: America/Sao_Paulo
+      MYSQL_ROOT_HOST: "%"
+      command: --mysqlx=OFF
+    ports:
+      - "1416:3306"
+
+volumes:
+  mysql_data:
