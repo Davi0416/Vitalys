@@ -16,28 +16,28 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `CARGOS`
+-- Table structure for table `cargos`
 --
 
-DROP TABLE IF EXISTS `CARGOS`;
-CREATE TABLE `CARGOS` (
-  `ID` int unsigned NOT NULL AUTO_INCREMENT,
-  `CARGO` varchar(100) NOT NULL,
-  `NIVEL_ACESSO` varchar(100) NOT NULL,
-  PRIMARY KEY (`ID`)
+DROP TABLE IF EXISTS `cargos`;
+CREATE TABLE `cargos` (
+                          `id` int unsigned NOT NULL AUTO_INCREMENT,
+                          `cargo` varchar(100) NOT NULL,
+                          `nivel_acesso` varchar(100) NOT NULL,
+                          PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Data for table `CARGOS`
+-- Data for table `cargos`
 --
 
-LOCK TABLES `CARGOS` WRITE;
-INSERT INTO `CARGOS` (`CARGO`, `NIVEL_ACESSO`) VALUES
-('Atendente', 'ADMIN'),
-('Médico', 'PROFISSIONAL'),
-('Fisioterapeuta', 'PROFISSIONAL'),
-('Enfermeiro', 'PROFISSIONAL'),
-('Psicólogo', 'PROFISSIONAL');
+LOCK TABLES `cargos` WRITE;
+INSERT INTO `cargos` (`cargo`, `nivel_acesso`) VALUES
+                                                   ('Atendente', 'ADMIN'),
+                                                   ('Médico', 'PROFISSIONAL'),
+                                                   ('Fisioterapeuta', 'PROFISSIONAL'),
+                                                   ('Enfermeiro', 'PROFISSIONAL'),
+                                                   ('Psicólogo', 'PROFISSIONAL');
 UNLOCK TABLES;
 
 --
@@ -46,95 +46,97 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `paciente`;
 CREATE TABLE `paciente` (
-  `ID` int unsigned NOT NULL AUTO_INCREMENT,
-  `NOME_COMPLETO` text NOT NULL,
-  `DATA_NASCIMENTO` date NOT NULL,
-  `ENDERECO` text NOT NULL,
-  `CPF` varchar(14) NOT NULL,
-  PRIMARY KEY (`ID`)
+                            `id` int unsigned NOT NULL AUTO_INCREMENT,
+                            `nome` varchar(150) NOT NULL,
+                            `cpf` varchar(14) NOT NULL,
+                            `email` varchar(150) NOT NULL,
+                            `data_nascimento` date NOT NULL,
+                            `endereco` text NOT NULL,
+                            PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 LOCK TABLES `paciente` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `PROFISSIONAIS`
+-- Table structure for table `profissionais`
 --
 
-DROP TABLE IF EXISTS `PROFISSIONAIS`;
-CREATE TABLE `PROFISSIONAIS` (
-  `ID` int unsigned NOT NULL AUTO_INCREMENT,
-  `NOME_COMPLETO` text NOT NULL,
-  `DATA_NASCIMENTO` date NOT NULL,
-  `ID_CARGO` int unsigned NOT NULL,
-  `CPF` varchar(14) NOT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `PROFISSIONAIS_CARGOS_FK` (`ID_CARGO`),
-  CONSTRAINT `PROFISSIONAIS_CARGOS_FK` FOREIGN KEY (`ID_CARGO`) REFERENCES `CARGOS` (`ID`)
+DROP TABLE IF EXISTS `profissionais`;
+CREATE TABLE `profissionais` (
+                                 `id` int unsigned NOT NULL AUTO_INCREMENT,
+                                 `nome` varchar(150) NOT NULL,
+                                 `cpf` varchar(14) NOT NULL,
+                                 `email` varchar(150) NOT NULL,
+                                 `data_nascimento` date NOT NULL,
+                                 `id_cargo` int unsigned NOT NULL,
+                                 PRIMARY KEY (`id`),
+                                 KEY `profissionais_cargos_fk` (`id_cargo`),
+                                 CONSTRAINT `profissionais_cargos_fk` FOREIGN KEY (`id_cargo`) REFERENCES `cargos` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-LOCK TABLES `PROFISSIONAIS` WRITE;
+LOCK TABLES `profissionais` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `USUARIOS`
+-- Table structure for table `usuarios`
 --
 
-DROP TABLE IF EXISTS `USUARIOS`;
-CREATE TABLE `USUARIOS` (
-  `ID` int unsigned NOT NULL AUTO_INCREMENT,
-  `LOGIN` varchar(100) NOT NULL,
-  `SENHA` varchar(100) NOT NULL,
-  `ID_CARGO` int unsigned NOT NULL,
-  `ID_PROFISSIONAL` int unsigned NULL,
-  `ATIVO` tinyint(1) NOT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `USUARIOS_CARGOS_FK` (`ID_CARGO`),
-  KEY `USUARIOS_PROFISSIONAIS_FK` (`ID_PROFISSIONAL`),
-  CONSTRAINT `USUARIOS_CARGOS_FK` FOREIGN KEY (`ID_CARGO`) REFERENCES `CARGOS` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `USUARIOS_PROFISSIONAIS_FK` FOREIGN KEY (`ID_PROFISSIONAL`) REFERENCES `PROFISSIONAIS` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
+DROP TABLE IF EXISTS `usuarios`;
+CREATE TABLE `usuarios` (
+                            `id` int unsigned NOT NULL AUTO_INCREMENT,
+                            `login` varchar(100) NOT NULL,
+                            `senha` varchar(100) NOT NULL,
+                            `id_cargo` int unsigned NOT NULL,
+                            `id_profissional` int unsigned NULL,
+                            `ativo` tinyint(1) NOT NULL DEFAULT 1,
+                            PRIMARY KEY (`id`),
+                            KEY `usuarios_cargos_fk` (`id_cargo`),
+                            KEY `usuarios_profissionais_fk` (`id_profissional`),
+                            CONSTRAINT `usuarios_cargos_fk` FOREIGN KEY (`id_cargo`) REFERENCES `cargos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+                            CONSTRAINT `usuarios_profissionais_fk` FOREIGN KEY (`id_profissional`) REFERENCES `profissionais` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-LOCK TABLES `USUARIOS` WRITE;
+LOCK TABLES `usuarios` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ATENDIMENTO`
+-- Table structure for table `atendimento`
 --
 
-DROP TABLE IF EXISTS `ATENDIMENTO`;
-CREATE TABLE `ATENDIMENTO` (
-  `ID` int unsigned NOT NULL AUTO_INCREMENT,
-  `ID_PACIENTE` int unsigned NOT NULL,
-  `ID_PROFISSIONAL` int unsigned NOT NULL,
-  `DATA_E_HORA_MARCADAS` datetime NOT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `ATENDIMENTO_PROFISSIONAIS_FK` (`ID_PROFISSIONAL`),
-  KEY `ATENDIMENTO_paciente_FK` (`ID_PACIENTE`),
-  CONSTRAINT `ATENDIMENTO_paciente_FK` FOREIGN KEY (`ID_PACIENTE`) REFERENCES `paciente` (`ID`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  CONSTRAINT `ATENDIMENTO_PROFISSIONAIS_FK` FOREIGN KEY (`ID_PROFISSIONAL`) REFERENCES `PROFISSIONAIS` (`ID`) ON DELETE SET DEFAULT ON UPDATE CASCADE
+DROP TABLE IF EXISTS `atendimento`;
+CREATE TABLE `atendimento` (
+                               `id` int unsigned NOT NULL AUTO_INCREMENT,
+                               `id_paciente` int unsigned NOT NULL,
+                               `id_profissional` int unsigned NOT NULL,
+                               `data_e_hora_marcadas` datetime NOT NULL,
+                               PRIMARY KEY (`id`),
+                               KEY `atendimento_profissionais_fk` (`id_profissional`),
+                               KEY `atendimento_paciente_fk` (`id_paciente`),
+                               CONSTRAINT `atendimento_paciente_fk` FOREIGN KEY (`id_paciente`) REFERENCES `paciente` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+                               CONSTRAINT `atendimento_profissionais_fk` FOREIGN KEY (`id_profissional`) REFERENCES `profissionais` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-LOCK TABLES `ATENDIMENTO` WRITE;
+LOCK TABLES `atendimento` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `CALENDARIO`
+-- Table structure for table `calendario`
 --
 
-DROP TABLE IF EXISTS `CALENDARIO`;
-CREATE TABLE `CALENDARIO` (
-  `ID` int unsigned NOT NULL AUTO_INCREMENT,
-  `NOME` varchar(100) NOT NULL,
-  `DATA` date NOT NULL,
-  `TIPO` varchar(20) NOT NULL,
-  `ID_ATENDIMENTO` int unsigned DEFAULT NULL,
-  PRIMARY KEY (`ID`),
-  KEY `CALENDARIO_ATENDIMENTO_FK` (`ID_ATENDIMENTO`),
-  CONSTRAINT `CALENDARIO_ATENDIMENTO_FK` FOREIGN KEY (`ID_ATENDIMENTO`) REFERENCES `ATENDIMENTO` (`ID`)
+DROP TABLE IF EXISTS `calendario`;
+CREATE TABLE `calendario` (
+                              `id` int unsigned NOT NULL AUTO_INCREMENT,
+                              `nome` varchar(100) NOT NULL,
+                              `data` date NOT NULL,
+                              `tipo` varchar(20) NOT NULL,
+                              `id_atendimento` int unsigned DEFAULT NULL,
+                              PRIMARY KEY (`id`),
+                              KEY `calendario_atendimento_fk` (`id_atendimento`),
+                              CONSTRAINT `calendario_atendimento_fk` FOREIGN KEY (`id_atendimento`) REFERENCES `atendimento` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-LOCK TABLES `CALENDARIO` WRITE;
+LOCK TABLES `calendario` WRITE;
 UNLOCK TABLES;
 
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
