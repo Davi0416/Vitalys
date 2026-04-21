@@ -114,7 +114,7 @@ vitalys-frontend/
 - [x] Especificação
 - [ ] Backend (Java)
 - [ ] Frontend
-- [ ] Banco de dados
+- [x] Banco de dados
 - [ ] Testes
 
 ---
