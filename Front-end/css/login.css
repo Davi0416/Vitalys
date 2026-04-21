@@ -1,7 +1,7 @@
+/* --- HEADER --- */
 header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     padding: 15px var(--side-padding, 5%);
     border-bottom: 1px solid var(--border);
     background-color: var(--background-surface);
@@ -11,38 +11,90 @@ header span {
     color: var(--text-primary);
     font-size: 14px;
     font-weight: bold;
+    margin-left: auto; 
+    margin-right: 15px;
 }
+
+/* --- ESTILO DA LOGO VITALYS --- */
 
 .logoClinica {
-    height: 50px; 
-    width: auto;
-    object-fit: contain;
+  height: 60px; /* Ajustei para 60px para um tamanho mais equilibrado, 
+                   como parecia estar nas imagens originais */
+  width: auto;
+  object-fit: contain;
+  transition: content 0.3s ease; /* Transição suave na troca da imagem */
 }
 
+/* 1. SEletor para o Tema Dark (Carga da imagem escura) */
+/* Quando o html tiver data-theme="dark" */
+[data-theme="dark"] .logoClinica {
+  content: url("../img/logo-vitalys-light.png");
+}
 
-body{
+/* 2. SEletor para quando o sistema for Dark (e o usuário não tiver forçado o light) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .logoClinica {
+    content: url("../img/logo-vitalys-dark.png");
+  }
+}
+
+/* --- BOTÃO DE TEMA --- */
+.botaoTema {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    cursor: pointer;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    
+    /* Centralização base */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.botaoTema:hover {
+    border-color: var(--color-primary);
+    background-color: var(--background-elevated);
+}
+
+#theme-icon {
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+
+/* --- CORPO DA PÁGINA --- */
+body {
     background-color: var(--background-page);
     color: var(--text-primary);
     margin: 0;
     display: flex;
-    flex-direction: column; /* Coloca header em cima e main embaixo */
+    flex-direction: column;
     min-height: 100vh;
 }
 
 main {
     display: flex;
-    justify-content: center; /* Centraliza horizontalmente */
-    align-items: center;     /* Centraliza verticalmente */
-    flex-grow: 1;            /* Faz o main "esticar" para preencher a tela */
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
 }
 
+/* --- CARD DE LOGIN --- */
 .login {
     background-color: var(--background-surface);
     padding: 40px;
     border-radius: 12px;
     border: 1px solid var(--border);
     width: 100%;
-    max-width: 400px; /* Largura máxima do card de login */
+    max-width: 400px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.3);
 }
 
@@ -55,7 +107,7 @@ main {
 .login form {
     display: flex;
     flex-direction: column;
-    gap: 15px; /* Cria um espaço igual entre cada campo */
+    gap: 15px;
 }
 
 .login input {
@@ -68,7 +120,7 @@ main {
 }
 
 .login input:focus {
-    border-color: var(--color-primary); /* Mostra onde o usuário está digitando */
+    border-color: var(--color-primary);
 }
 
 .login-actions {
@@ -91,13 +143,15 @@ main {
 }
 
 .botaoEntrar {
-  background: var(--color-primary);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    transition: background 0.3s;
 }
+
 .botaoEntrar:hover {
-  background: var(--color-primary-dark);
-  cursor: pointer;
+    background: var(--color-primary-dark);
+    cursor: pointer;
 }
