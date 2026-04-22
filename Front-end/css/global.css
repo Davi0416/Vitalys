@@ -36,43 +36,45 @@ button {
   --background-page: #f5f5f2;
   --background-surface: #ffffff;
   --background-elevated: #efefeb;
- 
+
   --text-primary: #111111;
   --text-secondary: #555555;
   --text-muted: #aaaaaa;
   --border: #deddd8;
 }
- 
+
 /* ─── Tema dark ─── */
 [data-theme="dark"] {
   --background-page: #1a1a1a;
   --background-surface: #222222;
   --background-elevated: #2a2a2a;
- 
+
   --text-primary: #ffffff;
   --text-secondary: #aaaaaa;
   --text-muted: #555555;
   --border: #333333;
 }
- 
+
 /* ─── Preferência do sistema (quando tema = "system") ─── */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]):not([data-theme="dark"]) {
     --background-page: #1a1a1a;
     --background-surface: #222222;
     --background-elevated: #2a2a2a;
- 
+
     --text-primary: #ffffff;
     --text-secondary: #aaaaaa;
     --text-muted: #555555;
     --border: #333333;
   }
 }
- 
+
 /* ─── Base ─── */
 body {
   font-family: "Montserrat", sans-serif;
   background-color: var(--background-page);
   color: var(--text-primary);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
