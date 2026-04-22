@@ -41,3 +41,5 @@ function applyTheme(theme) {
     themeIcon.innerHTML = theme.svg;
     localStorage.setItem('vitalys-theme-preference', theme.name);
 }
+
+
