@@ -16,11 +16,11 @@
       />
 
       <nav class="menuNavegacao">
-        <a href="#" class="link-menu">Início</a><!--tela com frase-->
-        <a href="#" class="link-menu">Pacientes</a><!---->
-        <a href="#" class="link-menu">Agendamentos</a> <!--novo agendamento/buscar agendamento-->
-        <a href="#" class="link-menu">Profissionais</a><!---->
-        <a href="#" class="link-menu">Calendário</a><!---->
+        <a href="#" onclick="mostrarTela('inicio', this)">Início</a>
+        <a href="#" onclick="mostrarTela('pacientes', this)">Pacientes</a>
+        <a href="#" onclick="mostrarTela('agendamentos', this)">Agendamentos</a>
+        <a href="#" onclick="mostrarTela('profissionais', this)">Profissionais</a>
+        <a href="#" onclick="mostrarTela('calendario', this)">Calendário</a>
       </nav>
 
       <span>Vitalys - Portal do Funcionário</span>
@@ -37,38 +37,89 @@
       </button>
     </header>
 
-    <!--section-->
-
     <main>
-      <!--INICIO-->
-      <section id="inicio" class="tela-conteudo">
+
+      <section id="inicio" class="tela-conteudo ativa">
         <h2>Vitalys: Um espaço dedicado ao cuidado, à saúde e à vida.</h2>
-
       </section>
 
-      <!--PACIENTES-->
       <section id="pacientes" class="tela-conteudo">
-
+        <div class="pacientes-toolbar">
+          <div class="pacientes-busca">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" class="icone-busca">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input
+              type="text"
+              id="buscarPaciente"
+              placeholder="Buscar paciente pelo nome..."
+              oninput="filtrarPacientes()"
+            />
+          </div>
+          <button class="btn-novo" onclick="abrirModal()">+ Novo</button>
+        </div>
+        <div class="pacientes-lista" id="listaPacientes">
+          <p class="lista-vazia" id="listaMensagem">Nenhum paciente encontrado.</p>
+        </div>
       </section>
-
-      <!--AGENDAMENTOS-->
 
       <section id="agendamentos" class="tela-conteudo">
-
+        <h2>Agendamentos</h2>
       </section>
 
-      <!--PROFISSIONAIS-->
       <section id="profissionais" class="tela-conteudo">
-
+        <h2>Profissionais</h2>
       </section>
-      <!--CALENDARIO-->
+
       <section id="calendario" class="tela-conteudo">
-
+        <h2>Calendário</h2>
       </section>
-
-
 
     </main>
+
+    <!-- Modal de paciente -->
+    <div class="modal-overlay" id="modalPaciente" onclick="fecharModalFora(event)">
+      <div class="modal">
+        <div class="modal-header">
+          <h2 id="modalTitulo">Novo Paciente</h2>
+          <button class="modal-fechar" onclick="fecharModal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+        <form id="formPaciente" onsubmit="salvarPaciente(event)">
+          <div class="modal-campo">
+            <label for="inputNome">Nome completo</label>
+            <input type="text" id="inputNome" placeholder="Ex: Maria Silva" required />
+          </div>
+          <div class="modal-campo">
+            <label for="inputCpf">CPF</label>
+            <input type="text" id="inputCpf" placeholder="000.000.000-00"
+                   maxlength="14" oninput="mascaraCpf(this)" required />
+          </div>
+          <div class="modal-campo">
+            <label for="inputEmail">Email</label>
+            <input type="email" id="inputEmail" placeholder="Ex: maria@email.com" />
+          </div>
+          <div class="modal-campo">
+            <label for="inputNascimento">Data de nascimento</label>
+            <input type="date" id="inputNascimento" required />
+          </div>
+          <div class="modal-campo">
+            <label for="inputEndereco">Endereço</label>
+            <input type="text" id="inputEndereco"
+                   placeholder="Ex: Rua das Flores, 123 - SP" required />
+          </div>
+          <div class="modal-acoes">
+            <button type="button" class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+            <button type="submit" class="btn-salvar" id="btnSalvar">Cadastrar</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
     <script src="scripts/script.js"></script>
   </body>
