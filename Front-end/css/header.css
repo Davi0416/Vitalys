@@ -1,0 +1,94 @@
+/* --- HEADER --- */
+header {
+  display: flex;
+  align-items: center;
+  padding: 15px var(--side-padding, 5%);
+  border-bottom: 1px solid var(--border);
+  background-color: var(--background-surface);
+  position: relative;
+}
+
+header span {
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: bold;
+  margin-left: auto;
+  margin-right: 15px;
+}
+
+/* --- LOGO --- */
+.logoClinica {
+  height: 60px;
+  width: auto;
+  object-fit: contain;
+  transition: content 0.3s ease;
+}
+
+[data-theme="dark"] .logoClinica {
+  content: url("../img/logo-vitalys-light.png");
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .logoClinica {
+    content: url("../img/logo-vitalys-dark.png");
+  }
+}
+
+/* --- MENU DE NAVEGAÇÃO --- */
+.menuNavegacao {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.menuNavegacao a {
+  font-size: 16px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.menuNavegacao a:hover {
+  background-color: var(--background-elevated);
+  color: var(--text-primary);
+}
+
+.menuNavegacao a.active {
+  background-color: var(--background-elevated);
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+/* --- BOTÃO DE TEMA --- */
+.botaoTema {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  cursor: pointer;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.botaoTema:hover {
+  border-color: var(--color-primary);
+  background-color: var(--background-elevated);
+}
+
+#theme-icon {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
