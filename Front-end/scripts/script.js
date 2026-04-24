@@ -42,9 +42,12 @@ function mostrarTela(id, link) {
   document.getElementById(id).classList.add('ativa');
   document.querySelectorAll('.menuNavegacao a').forEach(a => a.classList.remove('active'));
   link.classList.add('active');
-  if (id === 'pacientes') carregarPacientes();
-  if (id === 'agendamentos') carregarAgendamentos();
+
+  if (id === 'pacientes')     carregarPacientes();
+  if (id === 'agendamentos')  carregarAgendamentos();
   if (id === 'profissionais') carregarProfissionais();
+  if (id === 'calendario')    renderizarCalendario();
+  if (id === 'inicio')        atualizarResumoInicio();
 }
 
 // ════════════════════════════
@@ -202,20 +205,16 @@ async function removerPaciente(id) {
   } catch { alert('Erro ao remover.'); }
 }
 
-// Abre modal limpo para novo paciente
-document.getElementById('modalPaciente').addEventListener('click', () => {});
-function abrirModalNovoPaciente() {
+document.querySelector('#pacientes .btn-novo').onclick = () => {
   pacienteEditandoId = null;
   document.getElementById('tituloPaciente').textContent = 'Novo Paciente';
   document.getElementById('btnSalvarPaciente').textContent = 'Cadastrar';
   document.getElementById('formPaciente').reset();
   abrirModal('modalPaciente');
-}
-// Sobrescreve o onclick do botão novo de pacientes
-document.querySelector('#pacientes .btn-novo').onclick = abrirModalNovoPaciente;
+};
 
 // ════════════════════════════
-//  PROFISSIONAIS (dados locais — integrar com back depois)
+//  PROFISSIONAIS
 // ════════════════════════════
 let profissionais = [];
 let especialidades = ['Cardiologia', 'Dermatologia', 'Clínica Geral', 'Pediatria', 'Ortopedia'];
@@ -368,7 +367,7 @@ document.querySelector('#profissionais .btn-novo').onclick = () => {
 };
 
 // ════════════════════════════
-//  AGENDAMENTOS (dados locais — integrar com back depois)
+//  AGENDAMENTOS
 // ════════════════════════════
 let agendamentos = [];
 let horarioSelecionado = null;
@@ -441,7 +440,6 @@ function filtrarAgendamentos() {
   );
 }
 
-// Autocomplete paciente
 function autocompletePaciente() {
   const input = document.getElementById('inputPacienteAgend');
   const lista = document.getElementById('autocompletePaciente');
@@ -468,11 +466,9 @@ function autocompletePaciente() {
   });
 }
 
-// Fecha autocomplete ao clicar fora
 document.addEventListener('click', e => {
   const wrap = document.getElementById('autocompletePaciente');
-  if (wrap && !wrap.contains(e.target) &&
-      e.target.id !== 'inputPacienteAgend') {
+  if (wrap && !wrap.contains(e.target) && e.target.id !== 'inputPacienteAgend') {
     wrap.style.display = 'none';
   }
 });
@@ -489,7 +485,6 @@ function carregarHorarios() {
     return;
   }
 
-  // Horários já ocupados para esse profissional nessa data
   const ocupados = agendamentos
     .filter(a => String(a.profissionalId) === String(profId) && a.data === data)
     .map(a => a.hora);
@@ -517,10 +512,10 @@ function salvarAgendamento(event) {
   const data         = document.getElementById('inputDataAgend').value;
   const status       = document.getElementById('selectStatus').value;
 
-  if (!pacienteId)        { alert('Selecione um paciente da lista.'); return; }
-  if (!profId)            { alert('Selecione um profissional.'); return; }
-  if (!data)              { alert('Selecione uma data.'); return; }
-  if (!horarioSelecionado){ alert('Selecione um horário.'); return; }
+  if (!pacienteId)         { alert('Selecione um paciente da lista.'); return; }
+  if (!profId)             { alert('Selecione um profissional.'); return; }
+  if (!data)               { alert('Selecione uma data.'); return; }
+  if (!horarioSelecionado) { alert('Selecione um horário.'); return; }
 
   const prof = profissionais.find(p => String(p.id) === String(profId));
 
@@ -547,4 +542,141 @@ function cancelarAgendamento(id) {
   if (!confirm('Desmarcar este agendamento?')) return;
   agendamentos = agendamentos.filter(a => a.id !== id);
   renderizarAgendamentos(agendamentos);
+}
+
+// ════════════════════════════
+//  INÍCIO — resumo
+// ════════════════════════════
+function atualizarResumoInicio() {
+  const hoje = new Date().toLocaleDateString('pt-BR');
+  const agHoje = agendamentos.filter(a => a.data === hoje).length;
+  const profAtivos = profissionais.filter(p => p.status !== 'desligado').length;
+
+  const elAgHoje = document.getElementById('totalAgendamentosHoje');
+  const elProf   = document.getElementById('totalProfissionais');
+  const elPac    = document.getElementById('totalPacientes');
+
+  if (elAgHoje) elAgHoje.textContent = agHoje;
+  if (elProf)   elProf.textContent   = profAtivos;
+  if (elPac)    elPac.textContent    = pacientes.length;
+}
+
+// ════════════════════════════
+//  CALENDÁRIO
+// ════════════════════════════
+let calAno  = new Date().getFullYear();
+let calMes  = new Date().getMonth();
+let calDiaSelecionado = null;
+
+const MESES = [
+  'Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+  'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'
+];
+
+function mudarMes(dir) {
+  calMes += dir;
+  if (calMes > 11) { calMes = 0; calAno++; }
+  if (calMes < 0)  { calMes = 11; calAno--; }
+  renderizarCalendario();
+}
+
+function renderizarCalendario() {
+  document.getElementById('calTitulo').textContent = `${MESES[calMes]} ${calAno}`;
+
+  const container = document.getElementById('calDias');
+  container.innerHTML = '';
+
+  const hoje     = new Date();
+  const primeiro = new Date(calAno, calMes, 1).getDay();
+  const total    = new Date(calAno, calMes + 1, 0).getDate();
+
+  const diasComAtend = new Set(
+    agendamentos
+      .map(a => {
+        const partes = a.data.split('/');
+        if (partes.length === 3) {
+          const d = parseInt(partes[0]);
+          const m = parseInt(partes[1]) - 1;
+          const y = parseInt(partes[2]);
+          if (m === calMes && y === calAno) return d;
+        }
+        return null;
+      })
+      .filter(Boolean)
+  );
+
+  for (let i = 0; i < primeiro; i++) {
+    container.appendChild(document.createElement('div'));
+  }
+
+  for (let d = 1; d <= total; d++) {
+    const div = document.createElement('div');
+    div.className = 'cal-dia';
+
+    const isHoje = d === hoje.getDate() &&
+                   calMes === hoje.getMonth() &&
+                   calAno === hoje.getFullYear();
+
+    const isSelecionado = calDiaSelecionado &&
+                          d === calDiaSelecionado.d &&
+                          calMes === calDiaSelecionado.m &&
+                          calAno === calDiaSelecionado.y;
+
+    if (isHoje)        div.classList.add('hoje');
+    if (isSelecionado) div.classList.add('selecionado');
+    if (diasComAtend.has(d)) div.classList.add('tem-atend');
+
+    div.innerHTML = `${d}${diasComAtend.has(d) ? '<div class="cal-dot"></div>' : ''}`;
+
+    div.onclick = () => {
+      calDiaSelecionado = { d, m: calMes, y: calAno };
+      renderizarCalendario();
+      renderizarPainelDia(d, calMes, calAno);
+    };
+
+    container.appendChild(div);
+  }
+}
+
+function renderizarPainelDia(d, m, y) {
+  const painel = document.getElementById('calDireita');
+  const dataStr = `${String(d).padStart(2,'0')}/${String(m+1).padStart(2,'0')}/${y}`;
+
+  const idsComAgend = new Set(
+    agendamentos
+      .filter(a => a.data === dataStr)
+      .map(a => String(a.profissionalId))
+  );
+
+  const lista = profissionais.filter(p => p.status !== 'desligado');
+
+  if (lista.length === 0) {
+    painel.innerHTML = `
+      <p class="cal-direita-titulo">${d} de ${MESES[m]}</p>
+      <p class="cal-direita-vazia">Nenhum profissional ativo cadastrado.</p>
+    `;
+    return;
+  }
+
+  let html = `<p class="cal-direita-titulo">${d} de ${MESES[m]}</p>`;
+
+  lista.forEach(p => {
+    const temAgenda = idsComAgend.has(String(p.id));
+    const iniciais  = p.nome.split(' ').slice(0,2).map(n => n[0]).join('').toUpperCase();
+    html += `
+      <div class="prof-card" style="${!temAgenda ? 'opacity:0.45;' : ''}">
+        <div class="prof-avatar-cal">${iniciais}</div>
+        <div class="prof-card-info">
+          <span class="prof-card-nome">${p.nome}</span>
+          <span class="prof-card-esp">${p.especialidade ?? '-'}</span>
+        </div>
+        ${temAgenda
+          ? `<span class="prof-card-horario">Com agenda</span>`
+          : `<span class="prof-card-sem-agenda">Sem agenda</span>`
+        }
+      </div>
+    `;
+  });
+
+  painel.innerHTML = html;
 }
