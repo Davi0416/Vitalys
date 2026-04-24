@@ -26,6 +26,9 @@ public class Paciente {
     @Column(name = "endereco")
     private String endereco;
 
+    @Column(name = "telefone")
+    private String telefone;
+
     public Long getId() {
         return id;
     }
@@ -64,6 +67,14 @@ public class Paciente {
 
     public void setDataNascimento(Date dataNascimento) {
         this.dataNascimento = dataNascimento;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
 
     public String getEndereco() {
