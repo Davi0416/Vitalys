@@ -13,7 +13,7 @@ O **Vitalys** é um sistema desenvolvido para centralizar o controle de paciente
 ## Tecnologias
 
 - **Backend:** Java com Spring Boot
-- **Frontend:** a definir (desenvolvido por terceiros)
+- **Frontend:** Javascript
 
 ---
 
