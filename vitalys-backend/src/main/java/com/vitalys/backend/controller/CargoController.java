@@ -16,4 +16,9 @@ public class CargoController {
     public @ResponseBody Iterable<Cargo> findAll() {
         return cargoRepository.findAll();
     }
+
+    @PostMapping(path = "/cargos")
+    public Cargo create(@RequestBody Cargo cargo) {
+        return cargoRepository.save(cargo);
+    }
 }
