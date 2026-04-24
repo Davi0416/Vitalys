@@ -43,6 +43,14 @@ public class Profissional {
         this.nome = nome;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public Date getDataNascimento() {
         return dataNascimento;
     }
@@ -59,12 +67,12 @@ public class Profissional {
         this.cpf = cpf;
     }
 
-    public String getEmail() {
-        return email;
+    public String getTelefone() {
+        return telefone;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
 
     public String getTelefone() {
