@@ -107,12 +107,14 @@ main {
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 16px 20px;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 .item:hover {
   border-color: var(--color-primary-light);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .item-info {
@@ -258,8 +260,14 @@ main {
 }
 
 @keyframes modalEntrar {
-  from { opacity: 0; transform: translateY(-12px) scale(0.98); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .modal-header {
@@ -284,7 +292,9 @@ main {
   align-items: center;
   justify-content: center;
   border-radius: 6px;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 }
 
 .modal-fechar:hover {
@@ -372,14 +382,15 @@ main {
   display: none;
   position: absolute;
   top: calc(100% + 4px);
-  left: 0; right: 0;
+  left: 0;
+  right: 0;
   background: var(--background-surface);
   border: 1px solid var(--border);
   border-radius: 8px;
   z-index: 200;
   max-height: 180px;
   overflow-y: auto;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 .autocomplete-item {
@@ -435,4 +446,268 @@ main {
 .especialidade-wrap {
   display: flex;
   flex-direction: column;
+}
+
+/* ── INÍCIO ── */
+.inicio-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 64px 24px;
+  gap: 12px;
+}
+
+.inicio-icone {
+  width: 56px;
+  height: 56px;
+  background: var(--color-primary-soft);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.inicio-titulo {
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  max-width: 500px;
+  line-height: 1.5;
+}
+
+.inicio-sub {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.inicio-cards {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.inicio-card {
+  background: var(--background-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 140px;
+}
+
+.inicio-card-num {
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--color-primary);
+}
+
+.inicio-card-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* ── CALENDÁRIO ── */
+.cal-container {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.cal-esquerda {
+  flex: 1;
+  background: var(--background-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.cal-mes-titulo {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.cal-nav {
+  background: var(--background-elevated);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--text-secondary);
+  transition: all 0.15s;
+}
+
+.cal-nav:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.cal-dias {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.cal-dia-nome {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 4px 0;
+  font-weight: 500;
+}
+
+.cal-dia {
+  font-size: 13px;
+  text-align: center;
+  padding: 8px 4px 4px;
+  border-radius: 8px;
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  transition: background 0.15s;
+  min-height: 42px;
+}
+
+.cal-dia:hover {
+  background: var(--background-elevated);
+}
+
+.cal-dia.tem-atend {
+  color: var(--color-primary-dark);
+  font-weight: 500;
+}
+
+.cal-dia.hoje {
+  border: 1px solid var(--color-primary);
+}
+
+.cal-dia.selecionado {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.cal-dia.selecionado .cal-dot {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.cal-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-primary);
+}
+
+.cal-direita {
+  width: 260px;
+  background: var(--background-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  flex-shrink: 0;
+}
+
+.cal-direita-titulo {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 14px;
+}
+
+.cal-direita-vazia {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 24px 0;
+}
+
+.prof-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--background-elevated);
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+
+.prof-avatar-cal {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--color-primary-soft);
+  color: var(--color-primary-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.prof-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.prof-card-nome {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.prof-card-esp {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.prof-card-horario {
+  font-size: 10px;
+  background: var(--color-primary-soft);
+  color: var(--color-primary-dark);
+  padding: 3px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.prof-card-sem-agenda {
+  font-size: 10px;
+  background: var(--background-page);
+  color: var(--text-muted);
+  padding: 3px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
 }
