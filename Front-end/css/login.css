@@ -1,157 +1,82 @@
-/* --- HEADER --- */
-header {
-    display: flex;
-    align-items: center;
-    padding: 15px var(--side-padding, 5%);
-    border-bottom: 1px solid var(--border);
-    background-color: var(--background-surface);
-}
-
-header span {
-    color: var(--text-primary);
-    font-size: 14px;
-    font-weight: bold;
-    margin-left: auto; 
-    margin-right: 15px;
-}
-
-/* --- ESTILO DA LOGO VITALYS --- */
-
-.logoClinica {
-  height: 60px; /* Ajustei para 60px para um tamanho mais equilibrado, 
-                   como parecia estar nas imagens originais */
-  width: auto;
-  object-fit: contain;
-  transition: content 0.3s ease; /* Transição suave na troca da imagem */
-}
-
-/* 1. SEletor para o Tema Dark (Carga da imagem escura) */
-/* Quando o html tiver data-theme="dark" */
-[data-theme="dark"] .logoClinica {
-  content: url("../img/logo-vitalys-light.png");
-}
-
-/* 2. SEletor para quando o sistema for Dark (e o usuário não tiver forçado o light) */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .logoClinica {
-    content: url("../img/logo-vitalys-dark.png");
-  }
-}
-
-/* --- BOTÃO DE TEMA --- */
-.botaoTema {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-primary);
-    cursor: pointer;
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    
-    /* Centralização base */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    
-    padding: 0;
-    margin: 0;
-    overflow: hidden;
-    transition: all 0.2s ease;
-}
-
-.botaoTema:hover {
-    border-color: var(--color-primary);
-    background-color: var(--background-elevated);
-}
-
-#theme-icon {
-    width: 18px;
-    height: 18px;
-    display: block;
-}
-
-/* --- CORPO DA PÁGINA --- */
+/* --- LAYOUT DA PÁGINA DE LOGIN --- */
 body {
-    background-color: var(--background-page);
-    color: var(--text-primary);
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 main {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
 }
 
 /* --- CARD DE LOGIN --- */
 .login {
-    background-color: var(--background-surface);
-    padding: 40px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    width: 100%;
-    max-width: 400px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  background-color: var(--background-surface);
+  padding: 40px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
 }
 
 .login h1 {
-    margin-bottom: 24px;
-    text-align: center;
-    font-size: 2rem;
+  margin-bottom: 24px;
+  text-align: center;
+  font-size: 2rem;
 }
 
 .login form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 .login input {
-    padding: 12px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    background-color: var(--background-page);
-    color: var(--text-primary);
-    outline: none;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background-color: var(--background-page);
+  color: var(--text-primary);
+  outline: none;
 }
 
 .login input:focus {
-    border-color: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 .login-actions {
-    display: flex;
-    flex-direction: row-reverse;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 15px;
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
 }
 
 .link-forgot {
-    color: var(--text-secondary);
-    font-size: 0.8rem;
-    text-decoration: none;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  text-decoration: none;
 }
 
 .link-forgot:hover {
-    color: var(--color-primary-light);
-    text-decoration: underline;
+  color: var(--color-primary-light);
+  text-decoration: underline;
 }
 
 .botaoEntrar {
-    background: var(--color-primary);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 20px;
-    transition: background 0.3s;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  transition: background 0.3s;
+  cursor: pointer;
 }
 
 .botaoEntrar:hover {
-    background: var(--color-primary-dark);
-    cursor: pointer;
+  background: var(--color-primary-dark);
 }
