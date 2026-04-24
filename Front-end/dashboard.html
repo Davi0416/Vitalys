@@ -28,8 +28,31 @@
 
       <!-- INÍCIO -->
       <section id="inicio" class="tela-conteudo ativa">
-        <h2>Vitalys: Um espaço dedicado ao cuidado, à saúde e à vida.</h2>
-      </section>
+  <div class="inicio-wrap">
+    <div class="inicio-icone">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1D9E75"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+    </div>
+    <h2 class="inicio-titulo">Vitalys: Um espaço dedicado ao cuidado, à saúde e à vida.</h2>
+    <p class="inicio-sub">Bem-vindo ao portal do funcionário. Confira o resumo de hoje abaixo.</p>
+    <div class="inicio-cards">
+      <div class="inicio-card">
+        <span class="inicio-card-num" id="totalAgendamentosHoje">0</span>
+        <span class="inicio-card-label">Agendamentos hoje</span>
+      </div>
+      <div class="inicio-card">
+        <span class="inicio-card-num" id="totalProfissionais">0</span>
+        <span class="inicio-card-label">Profissionais ativos</span>
+      </div>
+      <div class="inicio-card">
+        <span class="inicio-card-num" id="totalPacientes">0</span>
+        <span class="inicio-card-label">Pacientes cadastrados</span>
+      </div>
+    </div>
+  </div>
+</section>
 
       <!-- PACIENTES -->
       <section id="pacientes" class="tela-conteudo">
@@ -90,8 +113,29 @@
 
       <!-- CALENDÁRIO -->
       <section id="calendario" class="tela-conteudo">
-        <h2>Calendário</h2>
-      </section>
+  <div class="cal-container">
+    <div class="cal-esquerda">
+      <div class="cal-header">
+        <button class="cal-nav" onclick="mudarMes(-1)">&#8249;</button>
+        <span class="cal-mes-titulo" id="calTitulo"></span>
+        <button class="cal-nav" onclick="mudarMes(1)">&#8250;</button>
+      </div>
+      <div class="cal-grid">
+        <div class="cal-dia-nome">Dom</div>
+        <div class="cal-dia-nome">Seg</div>
+        <div class="cal-dia-nome">Ter</div>
+        <div class="cal-dia-nome">Qua</div>
+        <div class="cal-dia-nome">Qui</div>
+        <div class="cal-dia-nome">Sex</div>
+        <div class="cal-dia-nome">Sáb</div>
+      </div>
+      <div class="cal-dias" id="calDias"></div>
+    </div>
+    <div class="cal-direita" id="calDireita">
+      <p class="cal-direita-vazia">Clique em um dia para ver os profissionais.</p>
+    </div>
+  </div>
+</section>
 
     </main>
 
