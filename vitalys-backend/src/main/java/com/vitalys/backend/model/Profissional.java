@@ -1,10 +1,11 @@
 package com.vitalys.backend.model;
+
 import jakarta.persistence.*;
 
 import java.util.Date;
 
 @Entity
-@Table (name = "profissionais")
+@Table(name = "profissionais")
 public class Profissional {
 
     @Id
@@ -22,6 +23,9 @@ public class Profissional {
 
     @Column(name = "cpf")
     private String cpf;
+
+    @Column(name = "telefone")
+    private String telefone;
 
     public Long getId() {
         return id;
@@ -61,5 +65,12 @@ public class Profissional {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
     }
 }
