@@ -1,5 +1,7 @@
 package com.vitalys.backend.model;
 
+import com.vitalys.backend.dto.RegistrarPacienteDTO;
+import com.vitalys.backend.dto.RegistrarProfissionalDTO;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -26,6 +28,25 @@ public class Profissional {
 
     @Column(name = "telefone")
     private String telefone;
+
+    public Profissional registrar(RegistrarProfissionalDTO registrarProfissionalDTO) {
+        this.nome = registrarProfissionalDTO.getNome();
+        this.email = registrarProfissionalDTO.getCpf();
+        this.dataNascimento = registrarProfissionalDTO.getDataNascimento();
+        this.cpf = registrarProfissionalDTO.getCpf();
+        this.telefone = registrarProfissionalDTO.getTelefone();
+        return this;
+    }
+
+    public void atualizar(RegistrarProfissionalDTO atualizarProfissional) {
+        this.nome = atualizarProfissional.getNome();
+        this.cpf = atualizarProfissional.getCpf();
+        this.email = atualizarProfissional.getEmail();
+        this.dataNascimento = atualizarProfissional.getDataNascimento();
+        this.telefone = atualizarProfissional.getTelefone();
+    }
+
+
 
     public Long getId() {
         return id;
@@ -72,13 +93,9 @@ public class Profissional {
     }
 
     public void setTelefone(String telefone) {
-        this.telefone = telefone;
     }
 
-    public String getTelefone() {
-        return telefone;
-    }
+    public Profissional() {
 
-    public void setTelefone(String telefone) {
     }
 }
