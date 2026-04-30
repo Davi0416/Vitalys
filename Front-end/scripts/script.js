@@ -1,6 +1,5 @@
-// ════════════════════════════
 //  TEMA
-// ════════════════════════════
+
 const btn = document.getElementById('theme-toggle');
 const themeIcon = document.getElementById('theme-icon');
 const html = document.documentElement;
@@ -34,9 +33,8 @@ function applyTheme(theme) {
   localStorage.setItem('vitalys-theme-preference', theme.name);
 }
 
-// ════════════════════════════
 //  NAVEGAÇÃO
-// ════════════════════════════
+
 function mostrarTela(id, link) {
   document.querySelectorAll('.tela-conteudo').forEach(s => s.classList.remove('ativa'));
   document.getElementById(id).classList.add('ativa');
@@ -50,9 +48,9 @@ function mostrarTela(id, link) {
   if (id === 'inicio')        atualizarResumoInicio();
 }
 
-// ════════════════════════════
-//  MODAL — utilitários
-// ════════════════════════════
+
+//  MODAL
+
 function abrirModal(id) {
   document.getElementById(id).classList.add('aberto');
 }
@@ -65,14 +63,24 @@ function fecharModalFora(event, id) {
   if (event.target === document.getElementById(id)) fecharModal(id);
 }
 
-// ════════════════════════════
+
 //  UTILITÁRIOS
-// ════════════════════════════
+
+const API = 'http://localhost:8080/vitalys';
+
 function formatarData(data) {
   if (!data) return '-';
   const d = new Date(data);
   if (isNaN(d)) return '-';
   return d.toLocaleDateString('pt-BR');
+}
+
+function formatarDataHora(timestamp) {
+  if (!timestamp) return '-';
+  const d = new Date(timestamp);
+  if (isNaN(d)) return '-';
+  return d.toLocaleDateString('pt-BR') + ' às ' +
+    d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 }
 
 function dataParaBackend(dataStr) {
@@ -102,16 +110,25 @@ function mascaraTelefone(input) {
   input.value = v;
 }
 
-// ════════════════════════════
+function nomePaciente(id) {
+  const p = pacientes.find(p => String(p.id) === String(id));
+  return p ? p.nome : `Paciente #${id}`;
+}
+
+function nomeProfissional(id) {
+  const p = profissionais.find(p => String(p.id) === String(id));
+  return p ? p.nome : `Profissional #${id}`;
+}
+
+
 //  PACIENTES
-// ════════════════════════════
-const API_PACIENTES = 'http://localhost:8080/vitalys/pacientes';
+
 let pacientes = [];
 let pacienteEditandoId = null;
 
 async function carregarPacientes() {
   try {
-    const res = await fetch(API_PACIENTES);
+    const res = await fetch(`${API}/pacientes`);
     pacientes = await res.json();
     renderizarPacientes(pacientes);
   } catch {
@@ -142,6 +159,7 @@ function renderizarPacientes(lista) {
           CPF: ${p.cpf ?? '-'} &nbsp;|&nbsp;
           Nasc: ${formatarData(p.dataNascimento)} &nbsp;|&nbsp;
           ${p.email ?? '-'} &nbsp;|&nbsp;
+          Tel: ${p.telefone ?? '-'} &nbsp;|&nbsp;
           ${p.endereco ?? '-'}
         </span>
       </div>
@@ -168,6 +186,7 @@ function editarPaciente(id) {
   document.getElementById('inputNome').value = p.nome ?? '';
   document.getElementById('inputCpf').value = p.cpf ?? '';
   document.getElementById('inputEmail').value = p.email ?? '';
+  document.getElementById('inputTelefonePaciente').value = p.telefone ?? '';
   document.getElementById('inputNascimento').value = dataParaInput(p.dataNascimento);
   document.getElementById('inputEndereco').value = p.endereco ?? '';
   abrirModal('modalPaciente');
@@ -176,19 +195,20 @@ function editarPaciente(id) {
 async function salvarPaciente(event) {
   event.preventDefault();
   const dados = {
-    nome: document.getElementById('inputNome').value.trim(),
-    cpf: document.getElementById('inputCpf').value.trim(),
-    email: document.getElementById('inputEmail').value.trim(),
+    nome:           document.getElementById('inputNome').value.trim(),
+    cpf:            document.getElementById('inputCpf').value.trim(),
+    email:          document.getElementById('inputEmail').value.trim(),
+    telefone:       document.getElementById('inputTelefonePaciente').value.trim(),
     dataNascimento: dataParaBackend(document.getElementById('inputNascimento').value),
-    endereco: document.getElementById('inputEndereco').value.trim(),
+    endereco:       document.getElementById('inputEndereco').value.trim(),
   };
   try {
     const res = pacienteEditandoId
-      ? await fetch(`${API_PACIENTES}/${pacienteEditandoId}`, {
+      ? await fetch(`${API}/pacientes/${pacienteEditandoId}`, {
           method: 'PUT', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(dados)
         })
-      : await fetch(API_PACIENTES, {
+      : await fetch(`${API}/pacientes`, {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(dados)
         });
@@ -200,7 +220,7 @@ async function salvarPaciente(event) {
 async function removerPaciente(id) {
   if (!confirm('Remover este paciente?')) return;
   try {
-    await fetch(`${API_PACIENTES}/${id}`, { method: 'DELETE' });
+    await fetch(`${API}/pacientes/${id}`, { method: 'DELETE' });
     carregarPacientes();
   } catch { alert('Erro ao remover.'); }
 }
@@ -213,16 +233,22 @@ document.querySelector('#pacientes .btn-novo').onclick = () => {
   abrirModal('modalPaciente');
 };
 
-// ════════════════════════════
+
 //  PROFISSIONAIS
-// ════════════════════════════
+
 let profissionais = [];
-let especialidades = ['Cardiologia', 'Dermatologia', 'Clínica Geral', 'Pediatria', 'Ortopedia'];
 let profEditandoId = null;
 
-function carregarProfissionais() {
-  renderizarProfissionais(profissionais);
-  atualizarSelectEspecialidades();
+async function carregarProfissionais() {
+  try {
+    const res = await fetch(`${API}/profissionais`);
+    profissionais = await res.json();
+    renderizarProfissionais(profissionais);
+    atualizarSelectProfissionaisAgendamento();
+  } catch {
+    document.getElementById('msgProfissionais').textContent =
+      'Não foi possível conectar ao servidor.';
+  }
 }
 
 function renderizarProfissionais(lista) {
@@ -240,25 +266,19 @@ function renderizarProfissionais(lista) {
   lista.forEach(p => {
     const item = document.createElement('div');
     item.className = 'item';
-    const ativo = p.status !== 'desligado';
     item.innerHTML = `
       <div class="item-info">
-        <span class="item-nome">
-          ${p.nome}
-          <span class="badge ${ativo ? 'badge-ativo' : 'badge-desligado'}">
-            ${ativo ? 'Ativo' : 'Desligado'}
-          </span>
-        </span>
+        <span class="item-nome">${p.nome}</span>
         <span class="item-detalhe">
-          ${p.especialidade ?? '-'} &nbsp;|&nbsp; ${p.telefone ?? '-'}
+          CPF: ${p.cpf ?? '-'} &nbsp;|&nbsp;
+          ${p.email ?? '-'} &nbsp;|&nbsp;
+          Tel: ${p.telefone ?? '-'} &nbsp;|&nbsp;
+          Nasc: ${formatarData(p.dataNascimento)}
         </span>
       </div>
       <div class="item-acoes">
         <button class="btn-editar" onclick="editarProfissional(${p.id})">Editar</button>
-        ${ativo
-          ? `<button class="btn-desligar" onclick="desligarProfissional(${p.id})">Desligar</button>`
-          : `<button class="btn-reativar" onclick="reativarProfissional(${p.id})">Reativar</button>`
-        }
+        <button class="btn-remover" onclick="removerProfissional(${p.id})">Remover</button>
       </div>
     `;
     container.appendChild(item);
@@ -270,28 +290,6 @@ function filtrarProfissionais() {
   renderizarProfissionais(profissionais.filter(p => p.nome.toLowerCase().includes(t)));
 }
 
-function atualizarSelectEspecialidades() {
-  const sel = document.getElementById('selectEspecialidade');
-  const valorAtual = sel.value;
-  sel.innerHTML = '<option value="">Selecione ou crie uma especialidade...</option>';
-  especialidades.forEach(e => {
-    const opt = document.createElement('option');
-    opt.value = e; opt.textContent = e;
-    sel.appendChild(opt);
-  });
-  const nova = document.createElement('option');
-  nova.value = '__nova__'; nova.textContent = '+ Criar nova especialidade';
-  sel.appendChild(nova);
-  sel.value = valorAtual;
-}
-
-function toggleNovaEspecialidade() {
-  const sel = document.getElementById('selectEspecialidade');
-  const input = document.getElementById('inputNovaEspecialidade');
-  input.style.display = sel.value === '__nova__' ? 'block' : 'none';
-  if (sel.value === '__nova__') input.focus();
-}
-
 function editarProfissional(id) {
   const p = profissionais.find(p => p.id === id);
   if (!p) return;
@@ -299,61 +297,48 @@ function editarProfissional(id) {
   document.getElementById('tituloProfissional').textContent = 'Editar Profissional';
   document.getElementById('btnSalvarProfissional').textContent = 'Salvar';
   document.getElementById('inputNomeProfissional').value = p.nome ?? '';
+  document.getElementById('inputCpfProfissional').value = p.cpf ?? '';
+  document.getElementById('inputEmailProfissional').value = p.email ?? '';
   document.getElementById('inputTelefone').value = p.telefone ?? '';
   document.getElementById('inputNascimentoProf').value = dataParaInput(p.dataNascimento);
-  atualizarSelectEspecialidades();
-  document.getElementById('selectEspecialidade').value = p.especialidade ?? '';
-  document.getElementById('inputNovaEspecialidade').style.display = 'none';
   abrirModal('modalProfissional');
 }
 
-function desligarProfissional(id) {
-  if (!confirm('Desligar este profissional? Os dados serão mantidos.')) return;
-  const p = profissionais.find(p => p.id === id);
-  if (p) { p.status = 'desligado'; renderizarProfissionais(profissionais); }
+async function removerProfissional(id) {
+  if (!confirm('Remover este profissional?')) return;
+  try {
+    // Typo no back: /profissinais/ — quando corrigir, troca para /profissionais/
+    await fetch(`${API}/profissinais/${id}`, { method: 'DELETE' });
+    carregarProfissionais();
+  } catch { alert('Erro ao remover.'); }
 }
 
-function reativarProfissional(id) {
-  const p = profissionais.find(p => p.id === id);
-  if (p) { p.status = 'ativo'; renderizarProfissionais(profissionais); }
-}
-
-function salvarProfissional(event) {
+async function salvarProfissional(event) {
   event.preventDefault();
-  const sel = document.getElementById('selectEspecialidade');
-  let especialidade = sel.value;
-
-  if (especialidade === '__nova__') {
-    const nova = document.getElementById('inputNovaEspecialidade').value.trim();
-    if (!nova) { alert('Digite o nome da nova especialidade.'); return; }
-    if (!especialidades.includes(nova)) especialidades.push(nova);
-    especialidade = nova;
-  }
-
-  if (!especialidade) { alert('Selecione ou crie uma especialidade.'); return; }
-
   const dados = {
-    id: profEditandoId ?? Date.now(),
-    nome: document.getElementById('inputNomeProfissional').value.trim(),
-    telefone: document.getElementById('inputTelefone').value.trim(),
-    dataNascimento: document.getElementById('inputNascimentoProf').value,
-    especialidade,
-    status: 'ativo',
+    nome:           document.getElementById('inputNomeProfissional').value.trim(),
+    cpf:            document.getElementById('inputCpfProfissional').value.trim(),
+    email:          document.getElementById('inputEmailProfissional').value.trim(),
+    telefone:       document.getElementById('inputTelefone').value.trim(),
+    dataNascimento: dataParaBackend(document.getElementById('inputNascimentoProf').value),
   };
-
-  if (profEditandoId) {
-    const idx = profissionais.findIndex(p => p.id === profEditandoId);
-    if (idx !== -1) profissionais[idx] = { ...profissionais[idx], ...dados };
-  } else {
-    profissionais.push(dados);
-  }
-
-  fecharModal('modalProfissional');
-  profEditandoId = null;
-  document.getElementById('formProfissional').reset();
-  document.getElementById('inputNovaEspecialidade').style.display = 'none';
-  renderizarProfissionais(profissionais);
-  atualizarSelectProfissionaisAgendamento();
+  try {
+    const res = profEditandoId
+      ? await fetch(`${API}/profissionais/${profEditandoId}`, {
+          method: 'PUT', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(dados)
+        })
+      : await fetch(`${API}/profissionais`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(dados)
+        });
+    if (res.ok) {
+      fecharModal('modalProfissional');
+      profEditandoId = null;
+      document.getElementById('formProfissional').reset();
+      carregarProfissionais();
+    } else alert('Erro ao salvar profissional.');
+  } catch { alert('Não foi possível conectar ao servidor.'); }
 }
 
 document.querySelector('#profissionais .btn-novo').onclick = () => {
@@ -361,14 +346,12 @@ document.querySelector('#profissionais .btn-novo').onclick = () => {
   document.getElementById('tituloProfissional').textContent = 'Novo Profissional';
   document.getElementById('btnSalvarProfissional').textContent = 'Cadastrar';
   document.getElementById('formProfissional').reset();
-  atualizarSelectEspecialidades();
-  document.getElementById('inputNovaEspecialidade').style.display = 'none';
   abrirModal('modalProfissional');
 };
 
-// ════════════════════════════
+
 //  AGENDAMENTOS
-// ════════════════════════════
+
 let agendamentos = [];
 let horarioSelecionado = null;
 
@@ -378,18 +361,25 @@ const HORARIOS_DISPONIVEIS = [
   '15:00', '15:30', '16:00', '16:30'
 ];
 
-function carregarAgendamentos() {
-  renderizarAgendamentos(agendamentos);
-  atualizarSelectProfissionaisAgendamento();
+async function carregarAgendamentos() {
+  try {
+    const res = await fetch(`${API}/atendimentos`);
+    agendamentos = await res.json();
+    renderizarAgendamentos(agendamentos);
+  } catch {
+    document.getElementById('msgAgendamentos').textContent =
+      'Não foi possível conectar ao servidor.';
+  }
 }
 
 function atualizarSelectProfissionaisAgendamento() {
   const sel = document.getElementById('selectProfissional');
   const valorAtual = sel.value;
   sel.innerHTML = '<option value="">Selecione um profissional...</option>';
-  profissionais.filter(p => p.status !== 'desligado').forEach(p => {
+  profissionais.forEach(p => {
     const opt = document.createElement('option');
-    opt.value = p.id; opt.textContent = `${p.nome} — ${p.especialidade}`;
+    opt.value = p.id;
+    opt.textContent = p.nome;
     sel.appendChild(opt);
   });
   sel.value = valorAtual;
@@ -410,19 +400,12 @@ function renderizarAgendamentos(lista) {
   lista.forEach(a => {
     const item = document.createElement('div');
     item.className = 'item';
-    const confirmado = a.status === 'confirmado';
     item.innerHTML = `
       <div class="item-info">
-        <span class="item-nome">
-          ${a.pacienteNome}
-          <span class="badge ${confirmado ? 'badge-ativo' : 'badge-pendente'}">
-            ${confirmado ? 'Confirmado' : 'Pendente'}
-          </span>
-        </span>
+        <span class="item-nome">${nomePaciente(a.idPaciente)}</span>
         <span class="item-detalhe">
-          ${a.profissionalNome} &nbsp;|&nbsp;
-          ${a.especialidade ?? '-'} &nbsp;|&nbsp;
-          ${a.data} às ${a.hora}
+          Profissional: ${nomeProfissional(a.idProfissional)} &nbsp;|&nbsp;
+          ${formatarDataHora(a.dataEHoraMarcadas)}
         </span>
       </div>
       <div class="item-acoes">
@@ -436,7 +419,7 @@ function renderizarAgendamentos(lista) {
 function filtrarAgendamentos() {
   const t = document.getElementById('buscarAgendamento').value.toLowerCase();
   renderizarAgendamentos(
-    agendamentos.filter(a => a.pacienteNome.toLowerCase().includes(t))
+    agendamentos.filter(a => nomePaciente(a.idPaciente).toLowerCase().includes(t))
   );
 }
 
@@ -486,86 +469,97 @@ function carregarHorarios() {
   }
 
   const ocupados = agendamentos
-    .filter(a => String(a.profissionalId) === String(profId) && a.data === data)
-    .map(a => a.hora);
+    .filter(a => {
+      if (String(a.idProfissional) !== String(profId)) return false;
+      const d = new Date(a.dataEHoraMarcadas);
+      return d.toISOString().split('T')[0] === data;
+    })
+    .map(a => {
+      const d = new Date(a.dataEHoraMarcadas);
+      return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    });
 
   HORARIOS_DISPONIVEIS.forEach(h => {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'horario-btn' + (ocupados.includes(h) ? ' ocupado' : '');
-    btn.textContent = h;
-    btn.disabled = ocupados.includes(h);
-    btn.onclick = () => {
-      grid.querySelectorAll('.horario-btn').forEach(b => b.classList.remove('selecionado'));
-      btn.classList.add('selecionado');
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'horario-btn' + (ocupados.includes(h) ? ' ocupado' : '');
+    b.textContent = h;
+    b.disabled = ocupados.includes(h);
+    b.onclick = () => {
+      grid.querySelectorAll('.horario-btn').forEach(x => x.classList.remove('selecionado'));
+      b.classList.add('selecionado');
       horarioSelecionado = h;
     };
-    grid.appendChild(btn);
+    grid.appendChild(b);
   });
 }
 
-function salvarAgendamento(event) {
+async function salvarAgendamento(event) {
   event.preventDefault();
-  const pacienteId   = document.getElementById('inputPacienteId').value;
-  const pacienteNome = document.getElementById('inputPacienteAgend').value.trim();
-  const profId       = document.getElementById('selectProfissional').value;
-  const data         = document.getElementById('inputDataAgend').value;
-  const status       = document.getElementById('selectStatus').value;
+  const pacienteId = document.getElementById('inputPacienteId').value;
+  const profId     = document.getElementById('selectProfissional').value;
+  const data       = document.getElementById('inputDataAgend').value;
 
   if (!pacienteId)         { alert('Selecione um paciente da lista.'); return; }
   if (!profId)             { alert('Selecione um profissional.'); return; }
   if (!data)               { alert('Selecione uma data.'); return; }
   if (!horarioSelecionado) { alert('Selecione um horário.'); return; }
 
-  const prof = profissionais.find(p => String(p.id) === String(profId));
+  const dados = {
+    idPaciente:        Number(pacienteId),
+    idProfissional:    Number(profId),
+    dataEHoraMarcadas: new Date(`${data}T${horarioSelecionado}:00`).getTime(),
+  };
 
-  agendamentos.push({
-    id: Date.now(),
-    pacienteId,
-    pacienteNome,
-    profissionalId: profId,
-    profissionalNome: prof?.nome ?? '-',
-    especialidade: prof?.especialidade ?? '-',
-    data: new Date(data + 'T00:00:00').toLocaleDateString('pt-BR'),
-    hora: horarioSelecionado,
-    status,
-  });
-
-  fecharModal('modalAgendamento');
-  document.getElementById('formAgendamento').reset();
-  document.getElementById('horariosGrid').innerHTML = '';
-  horarioSelecionado = null;
-  renderizarAgendamentos(agendamentos);
+  try {
+    const res = await fetch(`${API}/atendimentos`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(dados),
+    });
+    if (res.ok) {
+      fecharModal('modalAgendamento');
+      document.getElementById('formAgendamento').reset();
+      document.getElementById('horariosGrid').innerHTML = '';
+      horarioSelecionado = null;
+      carregarAgendamentos();
+    } else alert('Erro ao salvar agendamento.');
+  } catch { alert('Não foi possível conectar ao servidor.'); }
 }
 
-function cancelarAgendamento(id) {
+async function cancelarAgendamento(id) {
   if (!confirm('Desmarcar este agendamento?')) return;
-  agendamentos = agendamentos.filter(a => a.id !== id);
-  renderizarAgendamentos(agendamentos);
+  try {
+    // Requer DELETE /atendimentos/{id} no back
+    await fetch(`${API}/atendimentos/${id}`, { method: 'DELETE' });
+    carregarAgendamentos();
+  } catch { alert('Não foi possível conectar ao servidor.'); }
 }
 
-// ════════════════════════════
-//  INÍCIO — resumo
-// ════════════════════════════
+
+//  INÍCIO
+
 function atualizarResumoInicio() {
-  const hoje = new Date().toLocaleDateString('pt-BR');
-  const agHoje = agendamentos.filter(a => a.data === hoje).length;
-  const profAtivos = profissionais.filter(p => p.status !== 'desligado').length;
+  const hoje = new Date().toDateString();
+  const agHoje = agendamentos.filter(a => {
+    if (!a.dataEHoraMarcadas) return false;
+    return new Date(a.dataEHoraMarcadas).toDateString() === hoje;
+  }).length;
 
   const elAgHoje = document.getElementById('totalAgendamentosHoje');
   const elProf   = document.getElementById('totalProfissionais');
   const elPac    = document.getElementById('totalPacientes');
 
   if (elAgHoje) elAgHoje.textContent = agHoje;
-  if (elProf)   elProf.textContent   = profAtivos;
+  if (elProf)   elProf.textContent   = profissionais.length;
   if (elPac)    elPac.textContent    = pacientes.length;
 }
 
-// ════════════════════════════
+
 //  CALENDÁRIO
-// ════════════════════════════
-let calAno  = new Date().getFullYear();
-let calMes  = new Date().getMonth();
+
+let calAno = new Date().getFullYear();
+let calMes = new Date().getMonth();
 let calDiaSelecionado = null;
 
 const MESES = [
@@ -592,14 +586,10 @@ function renderizarCalendario() {
 
   const diasComAtend = new Set(
     agendamentos
+      .filter(a => a.dataEHoraMarcadas)
       .map(a => {
-        const partes = a.data.split('/');
-        if (partes.length === 3) {
-          const d = parseInt(partes[0]);
-          const m = parseInt(partes[1]) - 1;
-          const y = parseInt(partes[2]);
-          if (m === calMes && y === calAno) return d;
-        }
+        const d = new Date(a.dataEHoraMarcadas);
+        if (d.getMonth() === calMes && d.getFullYear() === calAno) return d.getDate();
         return null;
       })
       .filter(Boolean)
@@ -622,8 +612,8 @@ function renderizarCalendario() {
                           calMes === calDiaSelecionado.m &&
                           calAno === calDiaSelecionado.y;
 
-    if (isHoje)        div.classList.add('hoje');
-    if (isSelecionado) div.classList.add('selecionado');
+    if (isHoje)          div.classList.add('hoje');
+    if (isSelecionado)   div.classList.add('selecionado');
     if (diasComAtend.has(d)) div.classList.add('tem-atend');
 
     div.innerHTML = `${d}${diasComAtend.has(d) ? '<div class="cal-dot"></div>' : ''}`;
@@ -640,35 +630,36 @@ function renderizarCalendario() {
 
 function renderizarPainelDia(d, m, y) {
   const painel = document.getElementById('calDireita');
-  const dataStr = `${String(d).padStart(2,'0')}/${String(m+1).padStart(2,'0')}/${y}`;
 
   const idsComAgend = new Set(
     agendamentos
-      .filter(a => a.data === dataStr)
-      .map(a => String(a.profissionalId))
+      .filter(a => {
+        if (!a.dataEHoraMarcadas) return false;
+        const dt = new Date(a.dataEHoraMarcadas);
+        return dt.getDate() === d && dt.getMonth() === m && dt.getFullYear() === y;
+      })
+      .map(a => String(a.idProfissional))
   );
 
-  const lista = profissionais.filter(p => p.status !== 'desligado');
-
-  if (lista.length === 0) {
+  if (profissionais.length === 0) {
     painel.innerHTML = `
       <p class="cal-direita-titulo">${d} de ${MESES[m]}</p>
-      <p class="cal-direita-vazia">Nenhum profissional ativo cadastrado.</p>
+      <p class="cal-direita-vazia">Nenhum profissional cadastrado.</p>
     `;
     return;
   }
 
   let html = `<p class="cal-direita-titulo">${d} de ${MESES[m]}</p>`;
 
-  lista.forEach(p => {
+  profissionais.forEach(p => {
     const temAgenda = idsComAgend.has(String(p.id));
-    const iniciais  = p.nome.split(' ').slice(0,2).map(n => n[0]).join('').toUpperCase();
+    const iniciais  = p.nome.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase();
     html += `
       <div class="prof-card" style="${!temAgenda ? 'opacity:0.45;' : ''}">
         <div class="prof-avatar-cal">${iniciais}</div>
         <div class="prof-card-info">
           <span class="prof-card-nome">${p.nome}</span>
-          <span class="prof-card-esp">${p.especialidade ?? '-'}</span>
+          <span class="prof-card-esp">${p.email ?? '-'}</span>
         </div>
         ${temAgenda
           ? `<span class="prof-card-horario">Com agenda</span>`
