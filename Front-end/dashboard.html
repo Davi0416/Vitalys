@@ -9,67 +9,106 @@
   </head>
   <body>
     <header>
-      <img src="img/logo-vitalys-light.png" class="logoClinica" alt="Logo Vitalys" />
+      <img
+        src="img/logo-vitalys-light.png"
+        class="logoClinica"
+        alt="Logo Vitalys"
+      />
       <nav class="menuNavegacao">
         <a href="#" onclick="mostrarTela('inicio', this)">Início</a>
         <a href="#" onclick="mostrarTela('pacientes', this)">Pacientes</a>
         <a href="#" onclick="mostrarTela('agendamentos', this)">Agendamentos</a>
-        <a href="#" onclick="mostrarTela('profissionais', this)">Profissionais</a>
+        <a href="#" onclick="mostrarTela('profissionais', this)"
+          >Profissionais</a
+        >
         <a href="#" onclick="mostrarTela('calendario', this)">Calendário</a>
       </nav>
       <span>Vitalys - Portal do Funcionário</span>
       <button id="theme-toggle" class="botaoTema" title="Alternar tema">
-        <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
+        <svg
+          id="theme-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        ></svg>
       </button>
     </header>
 
     <main>
-
       <!-- INÍCIO -->
       <section id="inicio" class="tela-conteudo ativa">
-  <div class="inicio-wrap">
-    <div class="inicio-icone">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1D9E75"
-           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-      </svg>
-    </div>
-    <h2 class="inicio-titulo">Vitalys: Um espaço dedicado ao cuidado, à saúde e à vida.</h2>
-    <p class="inicio-sub">Bem-vindo ao portal do funcionário. Confira o resumo de hoje abaixo.</p>
-    <div class="inicio-cards">
-      <div class="inicio-card">
-        <span class="inicio-card-num" id="totalAgendamentosHoje">0</span>
-        <span class="inicio-card-label">Agendamentos hoje</span>
-      </div>
-      <div class="inicio-card">
-        <span class="inicio-card-num" id="totalProfissionais">0</span>
-        <span class="inicio-card-label">Profissionais ativos</span>
-      </div>
-      <div class="inicio-card">
-        <span class="inicio-card-num" id="totalPacientes">0</span>
-        <span class="inicio-card-label">Pacientes cadastrados</span>
-      </div>
-    </div>
-  </div>
-</section>
+        <div class="inicio-wrap">
+          <div class="inicio-icone">
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#1D9E75"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+            </svg>
+          </div>
+          <h2 class="inicio-titulo">
+            Vitalys: Um espaço dedicado ao cuidado, à saúde e à vida.
+          </h2>
+          <p class="inicio-sub">
+            Bem-vindo ao portal do funcionário. Confira o resumo de hoje abaixo.
+          </p>
+          <div class="inicio-cards">
+            <div class="inicio-card">
+              <span class="inicio-card-num" id="totalAgendamentosHoje">0</span>
+              <span class="inicio-card-label">Agendamentos hoje</span>
+            </div>
+            <div class="inicio-card">
+              <span class="inicio-card-num" id="totalProfissionais">0</span>
+              <span class="inicio-card-label">Profissionais ativos</span>
+            </div>
+            <div class="inicio-card">
+              <span class="inicio-card-num" id="totalPacientes">0</span>
+              <span class="inicio-card-label">Pacientes cadastrados</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <!-- PACIENTES -->
       <section id="pacientes" class="tela-conteudo">
         <div class="toolbar">
           <div class="busca">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                 stroke-linecap="round" stroke-linejoin="round" class="icone-busca">
-              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="icone-busca"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
-            <input type="text" id="buscarPaciente"
-                   placeholder="Buscar paciente pelo nome..."
-                   oninput="filtrarPacientes()" />
+            <input
+              type="text"
+              id="buscarPaciente"
+              placeholder="Buscar paciente pelo nome..."
+              oninput="filtrarPacientes()"
+            />
           </div>
-          <button class="btn-novo" onclick="abrirModal('modalPaciente')">+ Novo</button>
+          <button class="btn-novo" onclick="abrirModal('modalPaciente')">
+            + Novo
+          </button>
         </div>
         <div class="lista" id="listaPacientes">
-          <p class="lista-vazia" id="msgPacientes">Nenhum paciente encontrado.</p>
+          <p class="lista-vazia" id="msgPacientes">
+            Nenhum paciente encontrado.
+          </p>
         </div>
       </section>
 
@@ -77,18 +116,33 @@
       <section id="agendamentos" class="tela-conteudo">
         <div class="toolbar">
           <div class="busca">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                 stroke-linecap="round" stroke-linejoin="round" class="icone-busca">
-              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="icone-busca"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
-            <input type="text" id="buscarAgendamento"
-                   placeholder="Buscar agendamento pelo nome do paciente..."
-                   oninput="filtrarAgendamentos()" />
+            <input
+              type="text"
+              id="buscarAgendamento"
+              placeholder="Buscar agendamento pelo nome do paciente..."
+              oninput="filtrarAgendamentos()"
+            />
           </div>
-          <button class="btn-novo" onclick="abrirModal('modalAgendamento')">+ Novo</button>
+          <button class="btn-novo" onclick="abrirModal('modalAgendamento')">
+            + Novo
+          </button>
         </div>
         <div class="lista" id="listaAgendamentos">
-          <p class="lista-vazia" id="msgAgendamentos">Nenhum agendamento encontrado.</p>
+          <p class="lista-vazia" id="msgAgendamentos">
+            Nenhum agendamento encontrado.
+          </p>
         </div>
       </section>
 
@@ -96,74 +150,128 @@
       <section id="profissionais" class="tela-conteudo">
         <div class="toolbar">
           <div class="busca">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                 stroke-linecap="round" stroke-linejoin="round" class="icone-busca">
-              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="icone-busca"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
-            <input type="text" id="buscarProfissional"
-                   placeholder="Buscar profissional pelo nome..."
-                   oninput="filtrarProfissionais()" />
+            <input
+              type="text"
+              id="buscarProfissional"
+              placeholder="Buscar profissional pelo nome..."
+              oninput="filtrarProfissionais()"
+            />
           </div>
-          <button class="btn-novo" onclick="abrirModal('modalProfissional')">+ Novo</button>
+          <button class="btn-novo" onclick="abrirModal('modalProfissional')">
+            + Novo
+          </button>
         </div>
         <div class="lista" id="listaProfissionais">
-          <p class="lista-vazia" id="msgProfissionais">Nenhum profissional encontrado.</p>
+          <p class="lista-vazia" id="msgProfissionais">
+            Nenhum profissional encontrado.
+          </p>
         </div>
       </section>
 
       <!-- CALENDÁRIO -->
       <section id="calendario" class="tela-conteudo">
-  <div class="cal-container">
-    <div class="cal-esquerda">
-      <div class="cal-header">
-        <button class="cal-nav" onclick="mudarMes(-1)">&#8249;</button>
-        <span class="cal-mes-titulo" id="calTitulo"></span>
-        <button class="cal-nav" onclick="mudarMes(1)">&#8250;</button>
-      </div>
-      <div class="cal-grid">
-        <div class="cal-dia-nome">Dom</div>
-        <div class="cal-dia-nome">Seg</div>
-        <div class="cal-dia-nome">Ter</div>
-        <div class="cal-dia-nome">Qua</div>
-        <div class="cal-dia-nome">Qui</div>
-        <div class="cal-dia-nome">Sex</div>
-        <div class="cal-dia-nome">Sáb</div>
-      </div>
-      <div class="cal-dias" id="calDias"></div>
-    </div>
-    <div class="cal-direita" id="calDireita">
-      <p class="cal-direita-vazia">Clique em um dia para ver os profissionais.</p>
-    </div>
-  </div>
-</section>
-
+        <div class="cal-container">
+          <div class="cal-esquerda">
+            <div class="cal-header">
+              <button class="cal-nav" onclick="mudarMes(-1)">&#8249;</button>
+              <span class="cal-mes-titulo" id="calTitulo"></span>
+              <button class="cal-nav" onclick="mudarMes(1)">&#8250;</button>
+            </div>
+            <div class="cal-grid">
+              <div class="cal-dia-nome">Dom</div>
+              <div class="cal-dia-nome">Seg</div>
+              <div class="cal-dia-nome">Ter</div>
+              <div class="cal-dia-nome">Qua</div>
+              <div class="cal-dia-nome">Qui</div>
+              <div class="cal-dia-nome">Sex</div>
+              <div class="cal-dia-nome">Sáb</div>
+            </div>
+            <div class="cal-dias" id="calDias"></div>
+          </div>
+          <div class="cal-direita" id="calDireita">
+            <p class="cal-direita-vazia">
+              Clique em um dia para ver os profissionais.
+            </p>
+          </div>
+        </div>
+      </section>
     </main>
 
-    <!-- ═══ MODAL PACIENTE ═══ -->
-    <div class="modal-overlay" id="modalPaciente" onclick="fecharModalFora(event, 'modalPaciente')">
+    <!-- MODAL PACIENTE -->
+    <div
+      class="modal-overlay"
+      id="modalPaciente"
+      onclick="fecharModalFora(event, 'modalPaciente')"
+    >
       <div class="modal">
         <div class="modal-header">
           <h2 id="tituloPaciente">Novo Paciente</h2>
           <button class="modal-fechar" onclick="fecharModal('modalPaciente')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                 stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
-              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              width="18"
+              height="18"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
           </button>
         </div>
         <form id="formPaciente" onsubmit="salvarPaciente(event)">
           <div class="modal-campo">
             <label for="inputNome">Nome completo</label>
-            <input type="text" id="inputNome" placeholder="Ex: Maria Silva" required />
+            <input
+              type="text"
+              id="inputNome"
+              placeholder="Ex: Maria Silva"
+              required
+            />
           </div>
           <div class="modal-campo">
             <label for="inputCpf">CPF</label>
-            <input type="text" id="inputCpf" placeholder="000.000.000-00"
-                   maxlength="14" oninput="mascaraCpf(this)" required />
+            <input
+              type="text"
+              id="inputCpf"
+              placeholder="000.000.000-00"
+              maxlength="14"
+              oninput="mascaraCpf(this)"
+              required
+            />
           </div>
           <div class="modal-campo">
             <label for="inputEmail">Email</label>
-            <input type="email" id="inputEmail" placeholder="Ex: maria@email.com" />
+            <input
+              type="email"
+              id="inputEmail"
+              placeholder="Ex: maria@email.com"
+            />
+          </div>
+          <div class="modal-campo">
+            <label for="inputTelefonePaciente">Telefone</label>
+            <input
+              type="text"
+              id="inputTelefonePaciente"
+              placeholder="(00) 00000-0000"
+              maxlength="15"
+              oninput="mascaraTelefone(this)"
+            />
           </div>
           <div class="modal-campo">
             <label for="inputNascimento">Data de nascimento</label>
@@ -171,40 +279,70 @@
           </div>
           <div class="modal-campo">
             <label for="inputEndereco">Endereço</label>
-            <input type="text" id="inputEndereco"
-                   placeholder="Ex: Rua das Flores, 123 - SP" required />
+            <input
+              type="text"
+              id="inputEndereco"
+              placeholder="Ex: Rua das Flores, 123 - SP"
+              required
+            />
           </div>
           <div class="modal-acoes">
-            <button type="button" class="btn-cancelar"
-                    onclick="fecharModal('modalPaciente')">Cancelar</button>
-            <button type="submit" class="btn-salvar" id="btnSalvarPaciente">Cadastrar</button>
+            <button
+              type="button"
+              class="btn-cancelar"
+              onclick="fecharModal('modalPaciente')"
+            >
+              Cancelar
+            </button>
+            <button type="submit" class="btn-salvar" id="btnSalvarPaciente">
+              Cadastrar
+            </button>
           </div>
         </form>
       </div>
     </div>
 
-    <!-- ═══ MODAL AGENDAMENTO ═══ -->
-    <div class="modal-overlay" id="modalAgendamento" onclick="fecharModalFora(event, 'modalAgendamento')">
+    <!-- MODAL AGENDAMENTO -->
+    <div
+      class="modal-overlay"
+      id="modalAgendamento"
+      onclick="fecharModalFora(event, 'modalAgendamento')"
+    >
       <div class="modal">
         <div class="modal-header">
           <h2>Novo Agendamento</h2>
-          <button class="modal-fechar" onclick="fecharModal('modalAgendamento')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                 stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
-              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          <button
+            class="modal-fechar"
+            onclick="fecharModal('modalAgendamento')"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              width="18"
+              height="18"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
           </button>
         </div>
         <form id="formAgendamento" onsubmit="salvarAgendamento(event)">
-
           <!-- Busca paciente com autocomplete -->
           <div class="modal-campo">
             <label for="inputPacienteAgend">Paciente</label>
             <div class="autocomplete-wrap">
-              <input type="text" id="inputPacienteAgend"
-                     placeholder="Digite o nome do paciente..."
-                     oninput="autocompletePaciente()"
-                     autocomplete="off" required />
+              <input
+                type="text"
+                id="inputPacienteAgend"
+                placeholder="Digite o nome do paciente..."
+                oninput="autocompletePaciente()"
+                autocomplete="off"
+                required
+              />
               <input type="hidden" id="inputPacienteId" />
               <div class="autocomplete-lista" id="autocompletePaciente"></div>
             </div>
@@ -213,7 +351,11 @@
           <!-- Escolha profissional -->
           <div class="modal-campo">
             <label for="selectProfissional">Profissional</label>
-            <select id="selectProfissional" required onchange="carregarHorarios()">
+            <select
+              id="selectProfissional"
+              required
+              onchange="carregarHorarios()"
+            >
               <option value="">Selecione um profissional...</option>
             </select>
           </div>
@@ -221,14 +363,19 @@
           <!-- Data -->
           <div class="modal-campo">
             <label for="inputDataAgend">Data</label>
-            <input type="date" id="inputDataAgend" required onchange="carregarHorarios()" />
+            <input
+              type="date"
+              id="inputDataAgend"
+              required
+              onchange="carregarHorarios()"
+            />
           </div>
 
           <!-- Horário disponível -->
           <div class="modal-campo">
             <label>Horário disponível</label>
             <div class="horarios-grid" id="horariosGrid">
-              <p class="lista-vazia" style="padding: 12px 0; text-align:left;">
+              <p class="lista-vazia" style="padding: 12px 0; text-align: left">
                 Selecione um profissional e uma data.
               </p>
             </div>
@@ -244,58 +391,93 @@
           </div>
 
           <div class="modal-acoes">
-            <button type="button" class="btn-cancelar"
-                    onclick="fecharModal('modalAgendamento')">Cancelar</button>
+            <button
+              type="button"
+              class="btn-cancelar"
+              onclick="fecharModal('modalAgendamento')"
+            >
+              Cancelar
+            </button>
             <button type="submit" class="btn-salvar">Agendar</button>
           </div>
         </form>
       </div>
     </div>
 
-    <!-- ═══ MODAL PROFISSIONAL ═══ -->
-    <div class="modal-overlay" id="modalProfissional" onclick="fecharModalFora(event, 'modalProfissional')">
+    <!-- MODAL PROFISSIONAL -->
+    <div
+      class="modal-overlay"
+      id="modalProfissional"
+      onclick="fecharModalFora(event, 'modalProfissional')"
+    >
       <div class="modal">
         <div class="modal-header">
           <h2 id="tituloProfissional">Novo Profissional</h2>
-          <button class="modal-fechar" onclick="fecharModal('modalProfissional')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                 stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
-              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          <button
+            class="modal-fechar"
+            onclick="fecharModal('modalProfissional')"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              width="18"
+              height="18"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
           </button>
         </div>
         <form id="formProfissional" onsubmit="salvarProfissional(event)">
           <div class="modal-campo">
             <label for="inputNomeProfissional">Nome completo</label>
-            <input type="text" id="inputNomeProfissional"
-                   placeholder="Ex: Dr. João Silva" required />
+            <input
+              type="text"
+              id="inputNomeProfissional"
+              placeholder="Ex: Dr. João Silva"
+              required
+            />
           </div>
           <div class="modal-campo">
             <label for="inputTelefone">Telefone</label>
-            <input type="text" id="inputTelefone" placeholder="(00) 00000-0000"
-                   maxlength="15" oninput="mascaraTelefone(this)" required />
+            <input
+              type="text"
+              id="inputTelefone"
+              placeholder="(00) 00000-0000"
+              maxlength="15"
+              oninput="mascaraTelefone(this)"
+              required
+            />
           </div>
           <div class="modal-campo">
             <label for="inputNascimentoProf">Data de nascimento</label>
             <input type="date" id="inputNascimentoProf" required />
           </div>
           <div class="modal-campo">
-            <label for="inputEspecialidade">Especialidade</label>
-            <div class="especialidade-wrap">
-              <select id="selectEspecialidade" onchange="toggleNovaEspecialidade()">
-                <option value="">Selecione ou crie uma especialidade...</option>
-                <option value="__nova__">+ Criar nova especialidade</option>
-              </select>
-              <input type="text" id="inputNovaEspecialidade"
-                     placeholder="Nome da nova especialidade"
-                     style="display:none; margin-top: 8px;" />
-            </div>
+            <label for="inputCpfProfissional">CPF</label>
+            <input type="text" id="inputCpfProfissional" placeholder="000.000.000-00"
+         maxlength="14" oninput="mascaraCpf(this)" required />
+          </div>
+          <div class="modal-campo">
+            <label for="inputEmailProfissional">Email</label>
+            <input type="email" id="inputEmailProfissional" placeholder="Ex: joao@vitalys.com" />
+          </div>
           </div>
           <div class="modal-acoes">
-            <button type="button" class="btn-cancelar"
-                    onclick="fecharModal('modalProfissional')">Cancelar</button>
-            <button type="submit" class="btn-salvar"
-                    id="btnSalvarProfissional">Cadastrar</button>
+            <button
+              type="button"
+              class="btn-cancelar"
+              onclick="fecharModal('modalProfissional')"
+            >
+              Cancelar
+            </button>
+            <button type="submit" class="btn-salvar" id="btnSalvarProfissional">
+              Cadastrar
+            </button>
           </div>
         </form>
       </div>
