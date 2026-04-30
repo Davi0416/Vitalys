@@ -26,7 +26,7 @@ public class ProfissionalController {
         return profissionalRepository.findAll();
     }
 
-    @DeleteMapping(path = "/profissinais/{id}")
+    @DeleteMapping(path = "/profissionais/{id}")
     public void deleteProfissional(@PathVariable Long id) {
        profissionalRepository.deleteById(id);
     }
