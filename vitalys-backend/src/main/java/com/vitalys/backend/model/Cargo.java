@@ -16,6 +16,12 @@ public class Cargo {
     @Column(name = "nivel_acesso")
     private String nivelAcesso;
 
+    protected Cargo(Long id, String cargo, String nivelAcesso){
+        this.id = id;
+        this.cargo = cargo;
+        this.nivelAcesso = nivelAcesso;
+    }
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

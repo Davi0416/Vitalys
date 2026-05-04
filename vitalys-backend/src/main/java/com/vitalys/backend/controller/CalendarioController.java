@@ -13,13 +13,12 @@ public class CalendarioController {
     private CalendarioRepository calendarioRepository;
 
     @PostMapping(path = "/calendario")
-    public Calendario addCalendario(@RequestBody Calendario calendario){
+    public Calendario addCalendario(@RequestBody Calendario calendario) {
         return calendarioRepository.save(calendario);
     }
 
     @GetMapping(path = "/calendario")
-    public @ResponseBody Iterable<Calendario> findAllCalendario()
-    {
+    public @ResponseBody Iterable<Calendario> findAllCalendario() {
         return calendarioRepository.findAll();
     }
 }

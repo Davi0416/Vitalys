@@ -21,4 +21,7 @@ public class CargoController {
     public Cargo create(@RequestBody Cargo cargo) {
         return cargoRepository.save(cargo);
     }
+
+    @DeleteMapping(path = "/cargos/{id}")
+    public Cargo dele
 }
