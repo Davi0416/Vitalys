@@ -1,7 +1,7 @@
 @import url(global.css);
 @import url(header.css);
 
-/* ── LAYOUT ── */
+/* LAYOUT */
 body {
   display: flex;
   flex-direction: column;
@@ -21,7 +21,7 @@ main {
   display: block;
 }
 
-/* ── TOOLBAR ── */
+/* TOOLBAR */
 .toolbar {
   display: flex;
   align-items: center;
@@ -85,7 +85,7 @@ main {
   background: var(--color-primary-dark);
 }
 
-/* ── LISTA ── */
+/* LISTA */
 .lista {
   display: flex;
   flex-direction: column;
@@ -142,7 +142,7 @@ main {
   gap: 8px;
 }
 
-/* ── BADGES ── */
+/* BADGES */
 .badge {
   font-size: 11px;
   font-weight: 500;
@@ -175,7 +175,7 @@ main {
   color: #ffc107;
 }
 
-/* ── BOTÕES DA LISTA ── */
+/* BOTÕES DA LISTA */
 .btn-editar,
 .btn-remover,
 .btn-desligar,
@@ -230,13 +230,13 @@ main {
   color: #fff;
 }
 
-/* ── MODAL ── */
+/* MODAL */
 .modal-overlay {
   display: none;
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.45);
-  z-index: 100;
+  z-index: 200;
   align-items: center;
   justify-content: center;
   backdrop-filter: blur(2px);
@@ -373,7 +373,7 @@ main {
   background: var(--color-primary-dark);
 }
 
-/* ── AUTOCOMPLETE ── */
+/* AUTOCOMPLETE */
 .autocomplete-wrap {
   position: relative;
 }
@@ -405,7 +405,7 @@ main {
   background: var(--background-elevated);
 }
 
-/* ── HORÁRIOS ── */
+/* HORÁRIOS */
 .horarios-grid {
   display: flex;
   flex-wrap: wrap;
@@ -442,13 +442,13 @@ main {
   text-decoration: line-through;
 }
 
-/* ── ESPECIALIDADE ── */
+/* ESPECIALIDADE */
 .especialidade-wrap {
   display: flex;
   flex-direction: column;
 }
 
-/* ── INÍCIO ── */
+/* INÍCIO */
 .inicio-wrap {
   display: flex;
   flex-direction: column;
@@ -516,7 +516,7 @@ main {
   text-align: center;
 }
 
-/* ── CALENDÁRIO ── */
+/* CALENDÁRIO */
 .cal-container {
   display: flex;
   gap: 24px;
@@ -710,4 +710,66 @@ main {
   padding: 3px 8px;
   border-radius: 20px;
   white-space: nowrap;
+}
+
+/* RESPONSIVO */
+
+/* TABLET (até 768px) */
+@media (max-width: 768px) {
+
+  /* Calendário — empilha verticalmente */
+  .cal-container {
+    flex-direction: column;
+  }
+
+  .cal-direita {
+    width: 100%;
+  }
+}
+
+/* CELULAR (até 480px) */
+@media (max-width: 480px) {
+
+  /* Main */
+  main {
+    padding: 20px 4%;
+  }
+
+  /* Toolbar */
+  .toolbar {
+    flex-wrap: wrap;
+  }
+
+  .btn-novo {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Modal */
+  .modal {
+    padding: 24px 18px;
+    margin: 0 12px;
+    max-height: 95vh;
+  }
+
+  /* Cards do início */
+  .inicio-cards {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .inicio-card {
+    padding: 16px 20px;
+  }
+}
+
+/* DESKTOP LARGO (1200px+) */
+@media (min-width: 1200px) {
+  main {
+    padding: 40px 10%;
+  }
+
+  .modal {
+    max-width: 540px;
+  }
 }
