@@ -1,11 +1,17 @@
 package com.vitalys.backend.controller;
 
+import com.vitalys.backend.dto.CalendarioRequestDTO;
+import com.vitalys.backend.dto.CalendarioResponseDTO;
 import com.vitalys.backend.model.Calendario;
 import com.vitalys.backend.repository.CalendarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping(path = "/vitalys")
@@ -15,13 +21,21 @@ public class CalendarioController {
     private CalendarioRepository calendarioRepository;
 
     @PostMapping(path = "/calendario")
-    public ResponseEntity<Calendario> addCalendario(@RequestBody Calendario calendario) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(calendarioRepository.save(calendario));
+    public ResponseEntity<CalendarioResponseDTO> addCalendario(@RequestBody CalendarioRequestDTO dto) {
+        Calendario c = new Calendario();
+        c.setNome(dto.nome());
+        c.setData(dto.data());
+        c.setTipo(dto.tipo());
+        c.setIdAtendimento(dto.idAtendimento());
+        return ResponseEntity.status(HttpStatus.CREATED).body(new CalendarioResponseDTO(calendarioRepository.save(c)));
     }
 
     @GetMapping(path = "/calendario")
-    public ResponseEntity<Iterable<Calendario>> findAllCalendario() {
-        return ResponseEntity.ok(calendarioRepository.findAll());
+    public ResponseEntity<List<CalendarioResponseDTO>> findAllCalendario() {
+        List<CalendarioResponseDTO> lista = StreamSupport.stream(calendarioRepository.findAll().spliterator(), false)
+                .map(CalendarioResponseDTO::new)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(lista);
     }
 
     @DeleteMapping(path = "/calendario/{id}")
@@ -31,13 +45,13 @@ public class CalendarioController {
     }
 
     @PutMapping(path = "/calendario/{id}")
-    public ResponseEntity<Calendario> updateCalendario(@PathVariable Long id, @RequestBody Calendario calendario) {
+    public ResponseEntity<CalendarioResponseDTO> updateCalendario(@PathVariable Long id, @RequestBody CalendarioRequestDTO dto) {
         Calendario existente = calendarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Calendário não encontrado"));
-        existente.setNome(calendario.getNome());
-        existente.setData(calendario.getData());
-        existente.setTipo(calendario.getTipo());
-        existente.setIdAtendimento(calendario.getIdAtendimento());
-        return ResponseEntity.ok(calendarioRepository.save(existente));
+        existente.setNome(dto.nome());
+        existente.setData(dto.data());
+        existente.setTipo(dto.tipo());
+        existente.setIdAtendimento(dto.idAtendimento());
+        return ResponseEntity.ok(new CalendarioResponseDTO(calendarioRepository.save(existente)));
     }
 }
