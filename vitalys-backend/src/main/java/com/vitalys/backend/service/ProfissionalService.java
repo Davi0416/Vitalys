@@ -34,6 +34,7 @@ public class ProfissionalService {
         profissionalExistente.setEmail(dto.email());
         profissionalExistente.setCpf(dto.cpf());
         profissionalExistente.setTelefone(dto.telefone());
+        profissionalExistente.setDataNascimento(dto.dataNascimento());
 
         return new ProfissionalResponseDTO(profissionalRepository.save(profissionalExistente));
     }
