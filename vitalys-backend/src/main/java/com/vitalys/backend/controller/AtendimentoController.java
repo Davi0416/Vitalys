@@ -1,27 +1,47 @@
 package com.vitalys.backend.controller;
 
-import com.vitalys.backend.model.Atendimento;
+import com.vitalys.backend.dto.AtendimentoResponseDTO;
+import com.vitalys.backend.dto.RegistrarAtendimentoDTO;
 import com.vitalys.backend.repository.AtendimentoRepository;
+import com.vitalys.backend.service.AtendimentoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "vitalys")
+@RequestMapping(path = "/vitalys")
 public class AtendimentoController {
 
     @Autowired
     private AtendimentoRepository atendimentoRepository;
 
+    @Autowired
+    private AtendimentoService atendimentoService;
+
     @PostMapping(path = "/atendimentos")
-    public Atendimento save(@RequestBody Atendimento atendimento) {
-        return atendimentoRepository.save(atendimento);
+    public ResponseEntity<AtendimentoResponseDTO> create(@RequestBody @Valid RegistrarAtendimentoDTO dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(atendimentoService.registrar(dto));
     }
 
     @GetMapping(path = "/atendimentos")
-    public @ResponseBody List<Atendimento> findAll() {
-        return atendimentoRepository.findAll();
+    public ResponseEntity<List<AtendimentoResponseDTO>> findAll() {
+        return ResponseEntity.ok(atendimentoService.findAll());
+    }
+
+    @DeleteMapping(path = "/atendimentos/{id}")
+    public ResponseEntity<Void> deleteAtendimento(@PathVariable Long id) {
+        atendimentoRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping(path = "/atendimentos/{id}")
+    public ResponseEntity<AtendimentoResponseDTO> updateAtendimento(
+            @PathVariable Long id,
+            @RequestBody @Valid RegistrarAtendimentoDTO atendimento) {
+        return ResponseEntity.ok(atendimentoService.editar(id, atendimento));
     }
 }
-
