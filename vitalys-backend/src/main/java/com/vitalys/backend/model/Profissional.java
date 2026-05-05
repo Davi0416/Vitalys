@@ -77,6 +77,7 @@ public class Profissional {
     }
 
     public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
 
     public Profissional() {
