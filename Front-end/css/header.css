@@ -6,6 +6,7 @@ header {
   border-bottom: 1px solid var(--border);
   background-color: var(--background-surface);
   position: relative;
+  z-index: 100;
 }
 
 header span {
@@ -91,4 +92,93 @@ header span {
   width: 18px;
   height: 18px;
   display: block;
+}
+
+/* --- HAMBÚRGUER --- */
+.btn-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  padding: 0;
+  cursor: pointer;
+  margin-left: auto;
+  flex-shrink: 0;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.btn-hamburger:hover {
+  border-color: var(--color-primary);
+  background-color: var(--background-elevated);
+}
+
+.btn-hamburger span {
+  display: block;
+  width: 16px;
+  height: 2px;
+  background: var(--text-primary);
+  border-radius: 2px;
+  transition: all 0.25s ease;
+}
+
+/* Animação X ao abrir */
+.btn-hamburger.aberto span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.btn-hamburger.aberto span:nth-child(2) {
+  opacity: 0;
+}
+.btn-hamburger.aberto span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+@media (max-width: 768px) {
+  .btn-hamburger {
+    display: flex;
+  }
+
+  header {
+    flex-wrap: nowrap;
+  }
+
+  header span {
+    display: none;
+  }
+
+  .logoClinica {
+    height: 38px;
+  }
+
+  .menuNavegacao {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--background-surface);
+    border-bottom: 1px solid var(--border);
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    padding: 80px 16px 24px;
+    transform: translateY(-110%);
+    transition: transform 0.25s ease;
+    z-index: 99;
+  }
+
+  .menuNavegacao.aberto {
+    transform: translateY(0);
+  }
+
+  .menuNavegacao a {
+    font-size: 15px;
+    padding: 12px 16px;
+    border-radius: 8px;
+  }
 }

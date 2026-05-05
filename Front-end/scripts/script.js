@@ -36,6 +36,10 @@ function applyTheme(theme) {
 //  NAVEGAÇÃO
 
 function mostrarTela(id, link) {
+  // Fecha o menu hambúrguer ao navegar
+  document.querySelector('.menuNavegacao').classList.remove('aberto');
+  document.getElementById('btnHamburger').classList.remove('aberto');
+
   document.querySelectorAll('.tela-conteudo').forEach(s => s.classList.remove('ativa'));
   document.getElementById(id).classList.add('ativa');
   document.querySelectorAll('.menuNavegacao a').forEach(a => a.classList.remove('active'));
@@ -46,6 +50,13 @@ function mostrarTela(id, link) {
   if (id === 'profissionais') carregarProfissionais();
   if (id === 'calendario')    renderizarCalendario();
   if (id === 'inicio')        atualizarResumoInicio();
+}
+
+function toggleMenu() {
+  const menu = document.querySelector('.menuNavegacao');
+  const btn  = document.getElementById('btnHamburger');
+  menu.classList.toggle('aberto');
+  btn.classList.toggle('aberto');
 }
 
 
