@@ -236,7 +236,7 @@ main {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.45);
-  z-index: 100;
+  z-index: 200;
   align-items: center;
   justify-content: center;
   backdrop-filter: blur(2px);
@@ -710,4 +710,66 @@ main {
   padding: 3px 8px;
   border-radius: 20px;
   white-space: nowrap;
+}
+
+/* RESPONSIVO */
+
+/* TABLET (até 768px) */
+@media (max-width: 768px) {
+
+  /* Calendário — empilha verticalmente */
+  .cal-container {
+    flex-direction: column;
+  }
+
+  .cal-direita {
+    width: 100%;
+  }
+}
+
+/* CELULAR (até 480px) */
+@media (max-width: 480px) {
+
+  /* Main */
+  main {
+    padding: 20px 4%;
+  }
+
+  /* Toolbar */
+  .toolbar {
+    flex-wrap: wrap;
+  }
+
+  .btn-novo {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Modal */
+  .modal {
+    padding: 24px 18px;
+    margin: 0 12px;
+    max-height: 95vh;
+  }
+
+  /* Cards do início */
+  .inicio-cards {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .inicio-card {
+    padding: 16px 20px;
+  }
+}
+
+/* DESKTOP LARGO (1200px+) */
+@media (min-width: 1200px) {
+  main {
+    padding: 40px 10%;
+  }
+
+  .modal {
+    max-width: 540px;
+  }
 }
