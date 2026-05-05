@@ -1,7 +1,7 @@
 package com.vitalys.backend.controller;
 
+import com.vitalys.backend.dto.AtendimentoRequestDTO;
 import com.vitalys.backend.dto.AtendimentoResponseDTO;
-import com.vitalys.backend.dto.RegistrarAtendimentoDTO;
 import com.vitalys.backend.repository.AtendimentoRepository;
 import com.vitalys.backend.service.AtendimentoService;
 import jakarta.validation.Valid;
@@ -23,7 +23,7 @@ public class AtendimentoController {
     private AtendimentoService atendimentoService;
 
     @PostMapping(path = "/atendimentos")
-    public ResponseEntity<AtendimentoResponseDTO> create(@RequestBody @Valid RegistrarAtendimentoDTO dto) {
+    public ResponseEntity<AtendimentoResponseDTO> create(@RequestBody @Valid AtendimentoRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(atendimentoService.registrar(dto));
     }
 
@@ -41,7 +41,7 @@ public class AtendimentoController {
     @PutMapping(path = "/atendimentos/{id}")
     public ResponseEntity<AtendimentoResponseDTO> updateAtendimento(
             @PathVariable Long id,
-            @RequestBody @Valid RegistrarAtendimentoDTO atendimento) {
-        return ResponseEntity.ok(atendimentoService.editar(id, atendimento));
+            @RequestBody @Valid AtendimentoRequestDTO dto) {
+        return ResponseEntity.ok(atendimentoService.editar(id, dto));
     }
 }

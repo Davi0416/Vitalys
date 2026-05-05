@@ -1,7 +1,7 @@
 package com.vitalys.backend.service;
 
+import com.vitalys.backend.dto.AtendimentoRequestDTO;
 import com.vitalys.backend.dto.AtendimentoResponseDTO;
-import com.vitalys.backend.dto.RegistrarAtendimentoDTO;
 import com.vitalys.backend.model.Atendimento;
 import com.vitalys.backend.model.Paciente;
 import com.vitalys.backend.model.Profissional;
@@ -28,24 +28,19 @@ public class AtendimentoService {
         this.profissionalRepository = profissionalRepository;
     }
 
-    public AtendimentoResponseDTO registrar(RegistrarAtendimentoDTO dto) {
-        Paciente paciente = pacienteRepository.findById(dto.getIdPaciente())
+    public AtendimentoResponseDTO registrar(AtendimentoRequestDTO dto) {
+        Paciente paciente = pacienteRepository.findById(dto.idPaciente())
                 .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
-        Profissional profissional = profissionalRepository.findById(dto.getIdProfissional())
+        Profissional profissional = profissionalRepository.findById(dto.idProfissional())
                 .orElseThrow(() -> new RuntimeException("Profissional não encontrado"));
 
-        Atendimento atendimento = new Atendimento();
-        atendimento.setIdPaciente(dto.getIdPaciente());
-        atendimento.setIdProfissional(dto.getIdProfissional());
-        atendimento.setDataEHoraMarcadas(dto.getDataEHoraMarcadas());
-        atendimentoRepository.save(atendimento);
+        Atendimento a = new Atendimento();
+        a.setIdPaciente(dto.idPaciente());
+        a.setIdProfissional(dto.idProfissional());
+        a.setDataEHoraMarcadas(dto.dataEHoraMarcadas());
+        atendimentoRepository.save(a);
 
-        AtendimentoResponseDTO response = new AtendimentoResponseDTO();
-        response.setId(atendimento.getId());
-        response.setNomePaciente(paciente.getNome());
-        response.setNomeProfissional(profissional.getNome());
-        response.setDataEHoraMarcadas(atendimento.getDataEHoraMarcadas());
-        return response;
+        return new AtendimentoResponseDTO(a.getId(), paciente.getNome(), profissional.getNome(), a.getDataEHoraMarcadas());
     }
 
     public List<AtendimentoResponseDTO> findAll() {
@@ -54,33 +49,23 @@ public class AtendimentoService {
                     .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
             Profissional profissional = profissionalRepository.findById(a.getIdProfissional())
                     .orElseThrow(() -> new RuntimeException("Profissional não encontrado"));
-            AtendimentoResponseDTO dto = new AtendimentoResponseDTO();
-            dto.setId(a.getId());
-            dto.setNomePaciente(paciente.getNome());
-            dto.setNomeProfissional(profissional.getNome());
-            dto.setDataEHoraMarcadas(a.getDataEHoraMarcadas());
-            return dto;
+            return new AtendimentoResponseDTO(a.getId(), paciente.getNome(), profissional.getNome(), a.getDataEHoraMarcadas());
         }).collect(Collectors.toList());
     }
 
-    public AtendimentoResponseDTO editar(Long id, RegistrarAtendimentoDTO dto) {
-        Atendimento atendimento = atendimentoRepository.findById(id)
+    public AtendimentoResponseDTO editar(Long id, AtendimentoRequestDTO dto) {
+        Atendimento a = atendimentoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Atendimento não encontrado"));
-        Paciente paciente = pacienteRepository.findById(dto.getIdPaciente())
+        Paciente paciente = pacienteRepository.findById(dto.idPaciente())
                 .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
-        Profissional profissional = profissionalRepository.findById(dto.getIdProfissional())
+        Profissional profissional = profissionalRepository.findById(dto.idProfissional())
                 .orElseThrow(() -> new RuntimeException("Profissional não encontrado"));
 
-        atendimento.setIdPaciente(dto.getIdPaciente());
-        atendimento.setIdProfissional(dto.getIdProfissional());
-        atendimento.setDataEHoraMarcadas(dto.getDataEHoraMarcadas());
-        atendimentoRepository.save(atendimento);
+        a.setIdPaciente(dto.idPaciente());
+        a.setIdProfissional(dto.idProfissional());
+        a.setDataEHoraMarcadas(dto.dataEHoraMarcadas());
+        atendimentoRepository.save(a);
 
-        AtendimentoResponseDTO response = new AtendimentoResponseDTO();
-        response.setId(atendimento.getId());
-        response.setNomePaciente(paciente.getNome());
-        response.setNomeProfissional(profissional.getNome());
-        response.setDataEHoraMarcadas(atendimento.getDataEHoraMarcadas());
-        return response;
+        return new AtendimentoResponseDTO(a.getId(), paciente.getNome(), profissional.getNome(), a.getDataEHoraMarcadas());
     }
 }

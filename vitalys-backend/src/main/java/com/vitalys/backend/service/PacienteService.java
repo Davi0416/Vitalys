@@ -1,9 +1,14 @@
 package com.vitalys.backend.service;
 
-import com.vitalys.backend.dto.RegistrarPacienteDTO;
+import com.vitalys.backend.dto.PacienteRequestDTO;
+import com.vitalys.backend.dto.PacienteResponseDTO;
 import com.vitalys.backend.model.Paciente;
 import com.vitalys.backend.repository.PacienteRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class PacienteService {
@@ -14,14 +19,32 @@ public class PacienteService {
         this.pacienteRepository = pacienteRepository;
     }
 
-    public Paciente registrar(RegistrarPacienteDTO dto) {
-        return pacienteRepository.save(new Paciente().registrar(dto));
+    public List<PacienteResponseDTO> findAll() {
+        return StreamSupport.stream(pacienteRepository.findAll().spliterator(), false)
+                .map(PacienteResponseDTO::new)
+                .collect(Collectors.toList());
     }
 
-    public Paciente editar(Long id, RegistrarPacienteDTO dto) {
-        Paciente paciente = pacienteRepository.findById(id)
+    public PacienteResponseDTO registrar(PacienteRequestDTO dto) {
+        Paciente p = new Paciente();
+        p.setNome(dto.nome());
+        p.setCpf(dto.cpf());
+        p.setEmail(dto.email());
+        p.setDataNascimento(dto.dataNascimento());
+        p.setEndereco(dto.endereco());
+        p.setTelefone(dto.telefone());
+        return new PacienteResponseDTO(pacienteRepository.save(p));
+    }
+
+    public PacienteResponseDTO editar(Long id, PacienteRequestDTO dto) {
+        Paciente p = pacienteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
-        paciente.atualizar(dto);
-        return pacienteRepository.save(paciente);
+        p.setNome(dto.nome());
+        p.setCpf(dto.cpf());
+        p.setEmail(dto.email());
+        p.setDataNascimento(dto.dataNascimento());
+        p.setEndereco(dto.endereco());
+        p.setTelefone(dto.telefone());
+        return new PacienteResponseDTO(pacienteRepository.save(p));
     }
 }
