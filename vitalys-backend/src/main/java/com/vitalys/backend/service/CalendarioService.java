@@ -22,27 +22,20 @@ public class CalendarioService {
     public List<CalendarioResponseDTO> findAll() {
         return calendarioRepository.findAll().stream()
                 .map(CalendarioResponseDTO::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public CalendarioResponseDTO registrar(CalendarioRequestDTO dto) {
         Calendario c = new Calendario();
-        c.setNome(dto.nome());
-        c.setData(dto.data());
-        c.setTipo(dto.tipo());
-        c.setIdAtendimento(dto.idAtendimento());
+        c.atualizarDados(dto);
         return new CalendarioResponseDTO(calendarioRepository.save(c));
     }
 
     public CalendarioResponseDTO editar(Long id, CalendarioRequestDTO dto) {
-        Calendario existente = calendarioRepository.findById(id)
+        Calendario c = calendarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Data", id));
-        assert existente != null;
-        existente.setNome(dto.nome());
-        existente.setData(dto.data());
-        existente.setTipo(dto.tipo());
-        existente.setIdAtendimento(dto.idAtendimento());
-        return new CalendarioResponseDTO(calendarioRepository.save(existente));
+        c.atualizarDados(dto);
+        return new CalendarioResponseDTO(calendarioRepository.save(c));
     }
 
     public void deletar(Long id){

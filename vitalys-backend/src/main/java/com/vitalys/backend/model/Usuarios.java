@@ -1,5 +1,6 @@
 package com.vitalys.backend.model;
 
+import com.vitalys.backend.dto.UsuariosRequestDTO;
 import jakarta.persistence.*;
 
 
@@ -26,6 +27,14 @@ public class Usuarios {
     @Column(name = "ativo")
     private Boolean ativo;
 
+    public void atualizarDados(UsuariosRequestDTO dto) {
+        this.login = dto.login();
+        this.senha = dto.senha();
+        this.idCargo = dto.idCargo();
+        this.idProfissional = dto.idProfissional();
+        this.ativo = dto.ativo();
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -38,39 +47,15 @@ public class Usuarios {
         return login;
     }
 
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
     public Long getIdCargo() {
         return idCargo;
-    }
-
-    public void setIdCargo(Long idCargo) {
-        this.idCargo = idCargo;
     }
 
     public Long getIdProfissional() {
         return idProfissional;
     }
 
-    public void setIdProfissional(Long idProfissional) {
-        this.idProfissional = idProfissional;
-    }
-
     public Boolean getAtivo() {
         return ativo;
-    }
-
-    public void setAtivo(Boolean ativo) {
-        this.ativo = ativo;
     }
 }

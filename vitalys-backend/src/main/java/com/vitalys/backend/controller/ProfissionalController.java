@@ -11,16 +11,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(path = "/vitalys")
 public class ProfissionalController {
 
-    private final ProfissionalRepository profissionalRepository;
-
     private final ProfissionalService profissionalService;
 
     public ProfissionalController(ProfissionalRepository profissionalRepository, ProfissionalService profissionalService) {
-        this.profissionalRepository = profissionalRepository;
         this.profissionalService = profissionalService;
     }
 
@@ -30,8 +29,8 @@ public class ProfissionalController {
     }
 
     @GetMapping(path = "/profissionais")
-    public @ResponseBody Iterable<Profissional> findAll(){
-        return profissionalRepository.findAll();
+    public ResponseEntity<List<ProfissionalResponseDTO>> findAll(){
+        return ResponseEntity.ok(profissionalService.findAll());
     }
 
     @DeleteMapping(path = "/profissionais/{id}")

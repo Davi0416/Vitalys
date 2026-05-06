@@ -1,5 +1,6 @@
 package com.vitalys.backend.model;
 
+import com.vitalys.backend.dto.PacienteRequestDTO;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -30,26 +31,28 @@ public class Paciente {
     @Column(name = "telefone")
     private String telefone;
 
-    public Paciente() {}
+    public void atualizarDados(PacienteRequestDTO dto) {
+        this.nome = dto.nome();
+        this.cpf = dto.cpf();
+        this.email = dto.email();
+        this.dataNascimento = dto.dataNascimento();
+        this.endereco = dto.endereco();
+        this.telefone = dto.telefone();
+    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
     public String getNome() { return nome; }
-    public void setNome(String nome) { this.nome = nome; }
 
     public String getCpf() { return cpf; }
-    public void setCpf(String cpf) { this.cpf = cpf; }
 
     public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
 
     public Date getDataNascimento() { return dataNascimento; }
-    public void setDataNascimento(Date dataNascimento) { this.dataNascimento = dataNascimento; }
 
     public String getTelefone() { return telefone; }
-    public void setTelefone(String telefone) { this.telefone = telefone; }
 
     public String getEndereco() { return endereco; }
-    public void setEndereco(String endereco) { this.endereco = endereco; }
+
 }
