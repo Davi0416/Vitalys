@@ -36,12 +36,17 @@ public class UsuariosService {
 
     public UsuariosResponseDTO editar(Long id, UsuariosRequestDTO dto) {
         Usuarios existente = usuariosRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElse(null);
+        assert existente != null;
         existente.setLogin(dto.login());
         existente.setSenha(dto.senha());
         existente.setIdCargo(dto.idCargo());
         existente.setIdProfissional(dto.idProfissional());
         existente.setAtivo(dto.ativo());
         return new UsuariosResponseDTO(usuariosRepository.save(existente));
+    }
+
+    public void deletar(Long id){
+        usuariosRepository.deleteById(id);
     }
 }

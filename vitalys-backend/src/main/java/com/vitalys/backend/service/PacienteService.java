@@ -37,7 +37,9 @@ public class PacienteService {
 
     public PacienteResponseDTO editar(Long id, PacienteRequestDTO dto) {
         Paciente p = pacienteRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
+                .orElse(null);
+        assert p != null;
+
         p.setNome(dto.nome());
         p.setCpf(dto.cpf());
         p.setEmail(dto.email());
@@ -45,5 +47,9 @@ public class PacienteService {
         p.setEndereco(dto.endereco());
         p.setTelefone(dto.telefone());
         return new PacienteResponseDTO(pacienteRepository.save(p));
+    }
+
+    public void deletar(Long id){
+        pacienteRepository.deleteById(id);
     }
 }

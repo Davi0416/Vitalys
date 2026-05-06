@@ -33,10 +33,10 @@ public class CalendarioController {
 
     @DeleteMapping(path = "/calendario/{id}")
     public ResponseEntity<Void> deleteCalendario(@PathVariable Long id) {
-        calendarioRepository.deleteById(id);
         if(id == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        calendarioService.deletar(id);
         return ResponseEntity.noContent().build();
     }
 
