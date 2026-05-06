@@ -34,6 +34,9 @@ public class AtendimentoController {
 
     @DeleteMapping(path = "/atendimentos/{id}")
     public ResponseEntity<Void> deleteAtendimento(@PathVariable Long id) {
+        if(id == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         atendimentoRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
@@ -42,6 +45,9 @@ public class AtendimentoController {
     public ResponseEntity<AtendimentoResponseDTO> updateAtendimento(
             @PathVariable Long id,
             @RequestBody @Valid AtendimentoRequestDTO dto) {
+        if(id == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         return ResponseEntity.ok(atendimentoService.editar(id, dto));
     }
 }

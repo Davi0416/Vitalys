@@ -34,12 +34,18 @@ public class PacienteController {
 
     @DeleteMapping(path = "/pacientes/{id}")
     public ResponseEntity<Void> deletePaciente(@PathVariable Long id) {
+        if(id == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         pacienteRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping(path = "/pacientes/{id}")
     public ResponseEntity<PacienteResponseDTO> updatePaciente(@PathVariable Long id, @RequestBody @Valid PacienteRequestDTO paciente) {
+        if(id == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         return ResponseEntity.ok(pacienteService.editar(id, paciente));
     }
 }
