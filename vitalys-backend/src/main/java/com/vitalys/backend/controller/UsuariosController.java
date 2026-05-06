@@ -36,7 +36,7 @@ public class UsuariosController {
         if(id == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        usuariosRepository.deleteById(id);
+        usuariosService.deletar(id);
         return ResponseEntity.noContent().build();
     }
 

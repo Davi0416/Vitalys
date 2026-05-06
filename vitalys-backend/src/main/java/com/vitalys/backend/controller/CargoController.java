@@ -4,6 +4,7 @@ import com.vitalys.backend.dto.CargoRequestDTO;
 import com.vitalys.backend.dto.CargoResponseDTO;
 import com.vitalys.backend.repository.CargoRepository;
 import com.vitalys.backend.service.CargoService;
+import com.vitalys.backend.service.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,8 @@ public class CargoController {
 
     @Autowired
     private CargoService cargoService;
+    @Autowired
+    private PacienteService pacienteService;
 
     @PostMapping(path = "/cargos")
     public ResponseEntity<CargoResponseDTO> create(@RequestBody CargoRequestDTO dto) {
@@ -36,7 +39,7 @@ public class CargoController {
         if(id == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        cargoRepository.deleteById(id);
+        cargoService.deletar(id);
         return ResponseEntity.noContent().build();
     }
 

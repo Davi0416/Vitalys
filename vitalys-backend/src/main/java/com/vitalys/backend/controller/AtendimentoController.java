@@ -37,7 +37,7 @@ public class AtendimentoController {
         if(id == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        atendimentoRepository.deleteById(id);
+        atendimentoService.deletar(id);
         return ResponseEntity.noContent().build();
     }
 

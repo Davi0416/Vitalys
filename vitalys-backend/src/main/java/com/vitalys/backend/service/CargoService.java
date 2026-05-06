@@ -33,9 +33,14 @@ public class CargoService {
 
     public CargoResponseDTO editar(Long id, CargoRequestDTO dto) {
         Cargo existente = cargoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cargo não encontrado"));
+                .orElse(null);
+        assert existente != null;
         existente.setCargo(dto.cargo());
         existente.setNivelAcesso(dto.nivelAcesso());
         return new CargoResponseDTO(cargoRepository.save(existente));
+    }
+
+    public void deletar(Long id){
+        cargoRepository.deleteById(id);
     }
 }

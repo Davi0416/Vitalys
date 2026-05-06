@@ -37,7 +37,7 @@ public class PacienteController {
         if(id == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        pacienteRepository.deleteById(id);
+        pacienteService.deletar(id);
         return ResponseEntity.noContent().build();
     }
 
