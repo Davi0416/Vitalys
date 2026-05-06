@@ -22,22 +22,19 @@ public class CargoService {
     public List<CargoResponseDTO> findAll() {
         return cargoRepository.findAll().stream()
                 .map(CargoResponseDTO::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public CargoResponseDTO registrar(CargoRequestDTO dto) {
         Cargo cargo = new Cargo();
-        cargo.setCargo(dto.cargo());
-        cargo.setNivelAcesso(dto.nivelAcesso());
+        cargo.atualizarDados(dto);
         return new CargoResponseDTO(cargoRepository.save(cargo));
     }
 
     public CargoResponseDTO editar(Long id, CargoRequestDTO dto) {
         Cargo existente = cargoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cargo", id));
-        assert existente != null;
-        existente.setCargo(dto.cargo());
-        existente.setNivelAcesso(dto.nivelAcesso());
+        existente.atualizarDados(dto);
         return new CargoResponseDTO(cargoRepository.save(existente));
     }
 

@@ -31,14 +31,12 @@ public class AtendimentoService {
 
     public AtendimentoResponseDTO registrar(AtendimentoRequestDTO dto) {
         Paciente paciente = pacienteRepository.findById(dto.idPaciente())
-                .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Paciente", dto.idPaciente()));
         Profissional profissional = profissionalRepository.findById(dto.idProfissional())
-                .orElseThrow(() -> new RuntimeException("Profissional não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Profissional", dto.idProfissional()));
 
         Atendimento a = new Atendimento();
-        a.setIdPaciente(dto.idPaciente());
-        a.setIdProfissional(dto.idProfissional());
-        a.setDataEHoraMarcadas(dto.dataEHoraMarcadas());
+        a.atualizarDados(dto);
         atendimentoRepository.save(a);
 
         return new AtendimentoResponseDTO(a.getId(), profissional.getId(), paciente.getNome(), profissional.getNome(), a.getDataEHoraMarcadas());
@@ -51,7 +49,7 @@ public class AtendimentoService {
             Profissional profissional = profissionalRepository.findById(a.getIdProfissional())
                     .orElseThrow(() -> new ResourceNotFoundException("Profissional", a.getIdProfissional()));
             return new AtendimentoResponseDTO(a.getId(), profissional.getId(), paciente.getNome(), profissional.getNome(), a.getDataEHoraMarcadas());
-        }).collect(Collectors.toList());
+        }).toList();
     }
 
     public AtendimentoResponseDTO editar(Long id, AtendimentoRequestDTO dto) {
@@ -62,15 +60,15 @@ public class AtendimentoService {
         Profissional profissional = profissionalRepository.findById(dto.idProfissional())
                 .orElseThrow(() -> new ResourceNotFoundException("Profissional", dto.idProfissional()));
 
-        a.setIdPaciente(dto.idPaciente());
-        a.setIdProfissional(dto.idProfissional());
-        a.setDataEHoraMarcadas(dto.dataEHoraMarcadas());
+        a.atualizarDados(dto);
         atendimentoRepository.save(a);
 
         return new AtendimentoResponseDTO(a.getId(), profissional.getId(), paciente.getNome(), profissional.getNome(), a.getDataEHoraMarcadas());
     }
 
     public void deletar(Long id){
-        atendimentoRepository.deleteById(id);
+        Atendimento atendimento = atendimentoRepository.findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("Atendimento", id));
+        atendimentoRepository.delete(atendimento);
     }
 }

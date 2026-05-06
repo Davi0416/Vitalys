@@ -1,5 +1,6 @@
 package com.vitalys.backend.model;
 
+import com.vitalys.backend.dto.CargoRequestDTO;
 import jakarta.persistence.*;
 
 @Entity
@@ -18,18 +19,16 @@ public class Cargo {
 
     public Cargo() {}
 
-    public Cargo(Long id, String cargo, String nivelAcesso){
-        this.id = id;
-        this.cargo = cargo;
-        this.nivelAcesso = nivelAcesso;
+    public void atualizarDados(CargoRequestDTO dto) {
+        this.nivelAcesso = dto.nivelAcesso();
+        this.cargo = dto.cargo();
     }
 
     public Long getId() { return id; }
+
     public void setId(Long id) { this.id = id; }
 
     public String getCargo() { return cargo; }
-    public void setCargo(String cargo) { this.cargo = cargo; }
 
     public String getNivelAcesso() { return nivelAcesso; }
-    public void setNivelAcesso(String nivelAcesso) { this.nivelAcesso = nivelAcesso; }
 }

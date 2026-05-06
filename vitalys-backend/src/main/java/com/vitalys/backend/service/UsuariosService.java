@@ -22,28 +22,19 @@ public class UsuariosService {
     public List<UsuariosResponseDTO> findAll() {
         return usuariosRepository.findAll().stream()
                 .map(UsuariosResponseDTO::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public UsuariosResponseDTO registrar(UsuariosRequestDTO dto) {
         Usuarios u = new Usuarios();
-        u.setLogin(dto.login());
-        u.setSenha(dto.senha());
-        u.setIdCargo(dto.idCargo());
-        u.setIdProfissional(dto.idProfissional());
-        u.setAtivo(dto.ativo());
+        u.atualizarDados(dto);
         return new UsuariosResponseDTO(usuariosRepository.save(u));
     }
 
     public UsuariosResponseDTO editar(Long id, UsuariosRequestDTO dto) {
         Usuarios existente = usuariosRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário", id));
-        assert existente != null;
-        existente.setLogin(dto.login());
-        existente.setSenha(dto.senha());
-        existente.setIdCargo(dto.idCargo());
-        existente.setIdProfissional(dto.idProfissional());
-        existente.setAtivo(dto.ativo());
+        existente.atualizarDados(dto);
         return new UsuariosResponseDTO(usuariosRepository.save(existente));
     }
 
