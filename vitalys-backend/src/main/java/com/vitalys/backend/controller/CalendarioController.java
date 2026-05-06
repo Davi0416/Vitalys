@@ -2,9 +2,7 @@ package com.vitalys.backend.controller;
 
 import com.vitalys.backend.dto.CalendarioRequestDTO;
 import com.vitalys.backend.dto.CalendarioResponseDTO;
-import com.vitalys.backend.repository.CalendarioRepository;
 import com.vitalys.backend.service.CalendarioService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,11 +13,11 @@ import java.util.List;
 @RequestMapping(path = "/vitalys")
 public class CalendarioController {
 
-    @Autowired
-    private CalendarioRepository calendarioRepository;
+    private final CalendarioService calendarioService;
 
-    @Autowired
-    private CalendarioService calendarioService;
+    public CalendarioController(CalendarioService calendarioService) {
+        this.calendarioService = calendarioService;
+    }
 
     @PostMapping(path = "/calendario")
     public ResponseEntity<CalendarioResponseDTO> addCalendario(@RequestBody CalendarioRequestDTO dto) {
@@ -33,18 +31,12 @@ public class CalendarioController {
 
     @DeleteMapping(path = "/calendario/{id}")
     public ResponseEntity<Void> deleteCalendario(@PathVariable Long id) {
-        if(id == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
         calendarioService.deletar(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping(path = "/calendario/{id}")
     public ResponseEntity<CalendarioResponseDTO> updateCalendario(@PathVariable Long id, @RequestBody CalendarioRequestDTO dto) {
-        if(id == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
         return ResponseEntity.ok(calendarioService.editar(id, dto));
     }
 }

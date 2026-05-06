@@ -2,7 +2,6 @@ package com.vitalys.backend.controller;
 
 import com.vitalys.backend.dto.AtendimentoRequestDTO;
 import com.vitalys.backend.dto.AtendimentoResponseDTO;
-import com.vitalys.backend.repository.AtendimentoRepository;
 import com.vitalys.backend.service.AtendimentoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +15,11 @@ import java.util.List;
 @RequestMapping(path = "/vitalys")
 public class AtendimentoController {
 
-    @Autowired
-    private AtendimentoRepository atendimentoRepository;
+    private final AtendimentoService atendimentoService;
 
-    @Autowired
-    private AtendimentoService atendimentoService;
+    public AtendimentoController(AtendimentoService atendimentoService) {
+        this.atendimentoService = atendimentoService;
+    }
 
     @PostMapping(path = "/atendimentos")
     public ResponseEntity<AtendimentoResponseDTO> create(@RequestBody @Valid AtendimentoRequestDTO dto) {
@@ -34,9 +33,6 @@ public class AtendimentoController {
 
     @DeleteMapping(path = "/atendimentos/{id}")
     public ResponseEntity<Void> deleteAtendimento(@PathVariable Long id) {
-        if(id == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
         atendimentoService.deletar(id);
         return ResponseEntity.noContent().build();
     }
@@ -45,9 +41,6 @@ public class AtendimentoController {
     public ResponseEntity<AtendimentoResponseDTO> updateAtendimento(
             @PathVariable Long id,
             @RequestBody @Valid AtendimentoRequestDTO dto) {
-        if(id == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
         return ResponseEntity.ok(atendimentoService.editar(id, dto));
     }
 }

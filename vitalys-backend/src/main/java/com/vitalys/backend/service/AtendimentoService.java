@@ -2,6 +2,7 @@ package com.vitalys.backend.service;
 
 import com.vitalys.backend.dto.AtendimentoRequestDTO;
 import com.vitalys.backend.dto.AtendimentoResponseDTO;
+import com.vitalys.backend.exception.ResourceNotFoundException;
 import com.vitalys.backend.model.Atendimento;
 import com.vitalys.backend.model.Paciente;
 import com.vitalys.backend.model.Profissional;
@@ -46,20 +47,20 @@ public class AtendimentoService {
     public List<AtendimentoResponseDTO> findAll() {
         return atendimentoRepository.findAll().stream().map(a -> {
             Paciente paciente = pacienteRepository.findById(a.getIdPaciente())
-                    .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Paciente", a.getIdPaciente()));
             Profissional profissional = profissionalRepository.findById(a.getIdProfissional())
-                    .orElseThrow(() -> new RuntimeException("Profissional não encontrado"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Profissional", a.getIdProfissional()));
             return new AtendimentoResponseDTO(a.getId(), profissional.getId(), paciente.getNome(), profissional.getNome(), a.getDataEHoraMarcadas());
         }).collect(Collectors.toList());
     }
 
     public AtendimentoResponseDTO editar(Long id, AtendimentoRequestDTO dto) {
         Atendimento a = atendimentoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Atendimento não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Atendimento", id));
         Paciente paciente = pacienteRepository.findById(dto.idPaciente())
-                .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Paciente", dto.idPaciente()));
         Profissional profissional = profissionalRepository.findById(dto.idProfissional())
-                .orElseThrow(() -> new RuntimeException("Profissional não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Profissional", dto.idProfissional()));
 
         a.setIdPaciente(dto.idPaciente());
         a.setIdProfissional(dto.idProfissional());
