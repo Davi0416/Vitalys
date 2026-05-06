@@ -30,7 +30,7 @@ public class ProfissionalService {
         Profissional profissionalExistente = profissionalRepository
                 .findById(id)
                 .orElse(null);
-
+        assert profissionalExistente != null;
         profissionalExistente.setNome(dto.nome());
         profissionalExistente.setEmail(dto.email());
         profissionalExistente.setCpf(dto.cpf());
