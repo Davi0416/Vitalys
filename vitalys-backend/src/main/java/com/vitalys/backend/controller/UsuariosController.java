@@ -33,12 +33,18 @@ public class UsuariosController {
 
     @DeleteMapping(path = "/usuarios/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
+        if(id == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         usuariosRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping(path = "/usuarios/{id}")
     public ResponseEntity<UsuariosResponseDTO> update(@PathVariable Long id, @RequestBody UsuariosRequestDTO dto) {
+        if(id == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         return ResponseEntity.ok(usuariosService.editar(id, dto));
     }
 }

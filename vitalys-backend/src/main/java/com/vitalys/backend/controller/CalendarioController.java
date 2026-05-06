@@ -34,11 +34,17 @@ public class CalendarioController {
     @DeleteMapping(path = "/calendario/{id}")
     public ResponseEntity<Void> deleteCalendario(@PathVariable Long id) {
         calendarioRepository.deleteById(id);
+        if(id == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping(path = "/calendario/{id}")
     public ResponseEntity<CalendarioResponseDTO> updateCalendario(@PathVariable Long id, @RequestBody CalendarioRequestDTO dto) {
+        if(id == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         return ResponseEntity.ok(calendarioService.editar(id, dto));
     }
 }

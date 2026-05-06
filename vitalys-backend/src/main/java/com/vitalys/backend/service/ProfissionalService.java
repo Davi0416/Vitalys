@@ -4,6 +4,7 @@ import com.vitalys.backend.dto.ProfissionalRequestDTO;
 import com.vitalys.backend.dto.ProfissionalResponseDTO;
 import com.vitalys.backend.model.Profissional;
 import com.vitalys.backend.repository.ProfissionalRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,7 +29,7 @@ public class ProfissionalService {
     public ProfissionalResponseDTO editar(Long id, ProfissionalRequestDTO dto) {
         Profissional profissionalExistente = profissionalRepository
                 .findById(id)
-                .orElseThrow(() -> new RuntimeException("Profissional não encontrado"));
+                .orElse(null);
 
         profissionalExistente.setNome(dto.nome());
         profissionalExistente.setEmail(dto.email());
@@ -39,4 +40,7 @@ public class ProfissionalService {
         return new ProfissionalResponseDTO(profissionalRepository.save(profissionalExistente));
     }
 
+    public void deletar(Long id){
+        profissionalRepository.deleteById(id);
+    }
 }
