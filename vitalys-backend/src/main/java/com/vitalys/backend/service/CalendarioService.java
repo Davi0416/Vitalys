@@ -2,6 +2,7 @@ package com.vitalys.backend.service;
 
 import com.vitalys.backend.dto.CalendarioRequestDTO;
 import com.vitalys.backend.dto.CalendarioResponseDTO;
+import com.vitalys.backend.exception.ResourceNotFoundException;
 import com.vitalys.backend.model.Calendario;
 import com.vitalys.backend.repository.CalendarioRepository;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,7 @@ public class CalendarioService {
 
     public CalendarioResponseDTO editar(Long id, CalendarioRequestDTO dto) {
         Calendario existente = calendarioRepository.findById(id)
-                .orElse(null);
+                .orElseThrow(() -> new ResourceNotFoundException("Data", id));
         assert existente != null;
         existente.setNome(dto.nome());
         existente.setData(dto.data());
@@ -45,6 +46,8 @@ public class CalendarioService {
     }
 
     public void deletar(Long id){
-        calendarioRepository.deleteById(id);
+        Calendario existente = calendarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Data", id));
+        calendarioRepository.delete(existente);
     }
 }
