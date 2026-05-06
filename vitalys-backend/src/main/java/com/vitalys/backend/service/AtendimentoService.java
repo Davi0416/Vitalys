@@ -68,4 +68,8 @@ public class AtendimentoService {
 
         return new AtendimentoResponseDTO(a.getId(), profissional.getId(), paciente.getNome(), profissional.getNome(), a.getDataEHoraMarcadas());
     }
+
+    public void deletar(Long id){
+        atendimentoRepository.deleteById(id);
+    }
 }

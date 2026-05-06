@@ -35,11 +35,16 @@ public class CalendarioService {
 
     public CalendarioResponseDTO editar(Long id, CalendarioRequestDTO dto) {
         Calendario existente = calendarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Calendário não encontrado"));
+                .orElse(null);
+        assert existente != null;
         existente.setNome(dto.nome());
         existente.setData(dto.data());
         existente.setTipo(dto.tipo());
         existente.setIdAtendimento(dto.idAtendimento());
         return new CalendarioResponseDTO(calendarioRepository.save(existente));
+    }
+
+    public void deletar(Long id){
+        calendarioRepository.deleteById(id);
     }
 }

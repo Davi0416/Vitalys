@@ -38,11 +38,10 @@ public class ProfissionalController {
 
     @DeleteMapping(path = "/profissionais/{id}")
     public ResponseEntity<Void> deleteProfissional(@PathVariable Long id) {
-        profissionalService.deletar(id);
         if(id == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
+        profissionalService.deletar(id);
         return ResponseEntity.noContent().build();
     }
 
