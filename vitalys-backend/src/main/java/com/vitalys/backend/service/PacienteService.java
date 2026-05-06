@@ -22,30 +22,19 @@ public class PacienteService {
     public List<PacienteResponseDTO> findAll() {
         return pacienteRepository.findAll().stream()
                 .map(PacienteResponseDTO::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public PacienteResponseDTO registrar(PacienteRequestDTO dto) {
         Paciente p = new Paciente();
-        p.setNome(dto.nome());
-        p.setCpf(dto.cpf());
-        p.setEmail(dto.email());
-        p.setDataNascimento(dto.dataNascimento());
-        p.setEndereco(dto.endereco());
-        p.setTelefone(dto.telefone());
+        p.atualizarDados(dto);
         return new PacienteResponseDTO(pacienteRepository.save(p));
     }
 
     public PacienteResponseDTO editar(Long id, PacienteRequestDTO dto) {
         Paciente p = pacienteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Paciente", id));
-
-        p.setNome(dto.nome());
-        p.setCpf(dto.cpf());
-        p.setEmail(dto.email());
-        p.setDataNascimento(dto.dataNascimento());
-        p.setEndereco(dto.endereco());
-        p.setTelefone(dto.telefone());
+        p.atualizarDados(dto);
         return new PacienteResponseDTO(pacienteRepository.save(p));
     }
 

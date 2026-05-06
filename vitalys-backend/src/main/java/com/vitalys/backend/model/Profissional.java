@@ -30,7 +30,13 @@ public class Profissional {
     @Column(name = "telefone")
     private String telefone;
 
-
+    public void atualizarDados(ProfissionalRequestDTO dto) {
+        this.nome = dto.nome();
+        this.email = dto.email();
+        this.dataNascimento =  dto.dataNascimento();
+        this.cpf =  dto.cpf();
+        this.telefone = dto.telefone();
+    }
 
     public Long getId() {
         return id;
@@ -52,35 +58,15 @@ public class Profissional {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public Date getDataNascimento() {
         return dataNascimento;
-    }
-
-    public void setDataNascimento(Date dataNascimento) {
-        this.dataNascimento = dataNascimento;
     }
 
     public String getCpf() {
         return cpf;
     }
 
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-
     public String getTelefone() {
         return telefone;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-    public Profissional() {
-
     }
 }
