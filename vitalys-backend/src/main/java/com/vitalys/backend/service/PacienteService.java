@@ -2,6 +2,7 @@ package com.vitalys.backend.service;
 
 import com.vitalys.backend.dto.PacienteRequestDTO;
 import com.vitalys.backend.dto.PacienteResponseDTO;
+import com.vitalys.backend.exception.ResourceNotFoundException;
 import com.vitalys.backend.model.Paciente;
 import com.vitalys.backend.repository.PacienteRepository;
 import org.springframework.stereotype.Service;
@@ -37,8 +38,7 @@ public class PacienteService {
 
     public PacienteResponseDTO editar(Long id, PacienteRequestDTO dto) {
         Paciente p = pacienteRepository.findById(id)
-                .orElse(null);
-        assert p != null;
+                .orElseThrow(() -> new ResourceNotFoundException("Paciente", id));
 
         p.setNome(dto.nome());
         p.setCpf(dto.cpf());
@@ -50,6 +50,8 @@ public class PacienteService {
     }
 
     public void deletar(Long id){
-        pacienteRepository.deleteById(id);
+        Paciente p = pacienteRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Paciente", id));
+        pacienteRepository.delete(p);
     }
 }

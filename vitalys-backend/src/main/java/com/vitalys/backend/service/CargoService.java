@@ -2,6 +2,7 @@ package com.vitalys.backend.service;
 
 import com.vitalys.backend.dto.CargoRequestDTO;
 import com.vitalys.backend.dto.CargoResponseDTO;
+import com.vitalys.backend.exception.ResourceNotFoundException;
 import com.vitalys.backend.model.Cargo;
 import com.vitalys.backend.repository.CargoRepository;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,7 @@ public class CargoService {
 
     public CargoResponseDTO editar(Long id, CargoRequestDTO dto) {
         Cargo existente = cargoRepository.findById(id)
-                .orElse(null);
+                .orElseThrow(() -> new ResourceNotFoundException("Cargo", id));
         assert existente != null;
         existente.setCargo(dto.cargo());
         existente.setNivelAcesso(dto.nivelAcesso());
@@ -41,6 +42,8 @@ public class CargoService {
     }
 
     public void deletar(Long id){
-        cargoRepository.deleteById(id);
+        Cargo existente = cargoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cargo", id));
+        cargoRepository.delete(existente);
     }
 }

@@ -2,10 +2,8 @@ package com.vitalys.backend.controller;
 
 import com.vitalys.backend.dto.PacienteRequestDTO;
 import com.vitalys.backend.dto.PacienteResponseDTO;
-import com.vitalys.backend.repository.PacienteRepository;
 import com.vitalys.backend.service.PacienteService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +14,11 @@ import java.util.List;
 @RequestMapping(path = "/vitalys")
 public class PacienteController {
 
-    @Autowired
-    private PacienteRepository pacienteRepository;
+    private final PacienteService pacienteService;
 
-    @Autowired
-    private PacienteService pacienteService;
+    public PacienteController(PacienteService pacienteService) {
+        this.pacienteService = pacienteService;
+    }
 
     @PostMapping(path = "/pacientes")
     public ResponseEntity<PacienteResponseDTO> addPaciente(@RequestBody @Valid PacienteRequestDTO paciente) {
@@ -34,18 +32,12 @@ public class PacienteController {
 
     @DeleteMapping(path = "/pacientes/{id}")
     public ResponseEntity<Void> deletePaciente(@PathVariable Long id) {
-        if(id == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
         pacienteService.deletar(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping(path = "/pacientes/{id}")
     public ResponseEntity<PacienteResponseDTO> updatePaciente(@PathVariable Long id, @RequestBody @Valid PacienteRequestDTO paciente) {
-        if(id == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
         return ResponseEntity.ok(pacienteService.editar(id, paciente));
     }
 }

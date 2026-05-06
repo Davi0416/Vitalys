@@ -2,6 +2,7 @@ package com.vitalys.backend.service;
 
 import com.vitalys.backend.dto.UsuariosRequestDTO;
 import com.vitalys.backend.dto.UsuariosResponseDTO;
+import com.vitalys.backend.exception.ResourceNotFoundException;
 import com.vitalys.backend.model.Usuarios;
 import com.vitalys.backend.repository.UsuariosRepository;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,7 @@ public class UsuariosService {
 
     public UsuariosResponseDTO editar(Long id, UsuariosRequestDTO dto) {
         Usuarios existente = usuariosRepository.findById(id)
-                .orElse(null);
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário", id));
         assert existente != null;
         existente.setLogin(dto.login());
         existente.setSenha(dto.senha());
@@ -47,6 +48,8 @@ public class UsuariosService {
     }
 
     public void deletar(Long id){
-        usuariosRepository.deleteById(id);
+        Usuarios existente = usuariosRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário", id));
+        usuariosRepository.delete(existente);
     }
 }
