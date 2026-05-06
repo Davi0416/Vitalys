@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 public class PacienteService {
@@ -20,7 +19,7 @@ public class PacienteService {
     }
 
     public List<PacienteResponseDTO> findAll() {
-        return StreamSupport.stream(pacienteRepository.findAll().spliterator(), false)
+        return pacienteRepository.findAll().stream()
                 .map(PacienteResponseDTO::new)
                 .collect(Collectors.toList());
     }

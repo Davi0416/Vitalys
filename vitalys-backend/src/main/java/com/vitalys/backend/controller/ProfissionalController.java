@@ -17,11 +17,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "/vitalys")
 public class ProfissionalController {
 
-    @Autowired
-    private ProfissionalRepository profissionalRepository;
+    private final ProfissionalRepository profissionalRepository;
 
-    @Autowired
-    private ProfissionalService profissionalService;
+    private final ProfissionalService profissionalService;
+
+    public ProfissionalController(ProfissionalRepository profissionalRepository, ProfissionalService profissionalService) {
+        this.profissionalRepository = profissionalRepository;
+        this.profissionalService = profissionalService;
+    }
 
     @PostMapping(path="/profissionais")
     public ResponseEntity<ProfissionalResponseDTO> registrar(@RequestBody @Validated ProfissionalRequestDTO dto){
@@ -34,14 +37,23 @@ public class ProfissionalController {
     }
 
     @DeleteMapping(path = "/profissionais/{id}")
-    public void deleteProfissional(@PathVariable Long id) {
-       profissionalRepository.deleteById(id);
+    public ResponseEntity<Void> deleteProfissional(@PathVariable Long id) {
+        profissionalService.deletar(id);
+        if(id == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/profissionais/{id}")
     public ResponseEntity<ProfissionalResponseDTO> updateProfissional(
             @PathVariable Long id,
             @RequestBody @Valid ProfissionalRequestDTO profissional) {
+        if(id == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
         return ResponseEntity.ok(profissionalService.editar(id, profissional));
     }
 }
