@@ -40,7 +40,7 @@ public class AtendimentoService {
         a.setDataEHoraMarcadas(dto.dataEHoraMarcadas());
         atendimentoRepository.save(a);
 
-        return new AtendimentoResponseDTO(a.getId(), paciente.getNome(), profissional.getNome(), a.getDataEHoraMarcadas());
+        return new AtendimentoResponseDTO(a.getId(), profissional.getId(), paciente.getNome(), profissional.getNome(), a.getDataEHoraMarcadas());
     }
 
     public List<AtendimentoResponseDTO> findAll() {
@@ -49,7 +49,7 @@ public class AtendimentoService {
                     .orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
             Profissional profissional = profissionalRepository.findById(a.getIdProfissional())
                     .orElseThrow(() -> new RuntimeException("Profissional não encontrado"));
-            return new AtendimentoResponseDTO(a.getId(), paciente.getNome(), profissional.getNome(), a.getDataEHoraMarcadas());
+            return new AtendimentoResponseDTO(a.getId(), profissional.getId(), paciente.getNome(), profissional.getNome(), a.getDataEHoraMarcadas());
         }).collect(Collectors.toList());
     }
 
@@ -66,6 +66,6 @@ public class AtendimentoService {
         a.setDataEHoraMarcadas(dto.dataEHoraMarcadas());
         atendimentoRepository.save(a);
 
-        return new AtendimentoResponseDTO(a.getId(), paciente.getNome(), profissional.getNome(), a.getDataEHoraMarcadas());
+        return new AtendimentoResponseDTO(a.getId(), profissional.getId(), paciente.getNome(), profissional.getNome(), a.getDataEHoraMarcadas());
     }
 }
