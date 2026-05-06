@@ -33,10 +33,10 @@ function applyTheme(theme) {
   localStorage.setItem('vitalys-theme-preference', theme.name);
 }
 
+
 //  NAVEGAÇÃO
 
 function mostrarTela(id, link) {
-  // Fecha o menu hambúrguer ao navegar
   document.querySelector('.menuNavegacao').classList.remove('aberto');
   document.getElementById('btnHamburger').classList.remove('aberto');
 
@@ -86,9 +86,10 @@ function formatarData(data) {
   return d.toLocaleDateString('pt-BR');
 }
 
-function formatarDataHora(timestamp) {
-  if (!timestamp) return '-';
-  const d = new Date(timestamp);
+function formatarDataHora(valor) {
+  if (!valor) return '-';
+  // Suporta tanto LocalDateTime string ("2025-05-01T10:00:00") quanto timestamp
+  const d = new Date(valor);
   if (isNaN(d)) return '-';
   return d.toLocaleDateString('pt-BR') + ' às ' +
     d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
@@ -119,16 +120,6 @@ function mascaraTelefone(input) {
   v = v.replace(/(\d{2})(\d)/, '($1) $2');
   v = v.replace(/(\d{5})(\d)/, '$1-$2');
   input.value = v;
-}
-
-function nomePaciente(id) {
-  const p = pacientes.find(p => String(p.id) === String(id));
-  return p ? p.nome : `Paciente #${id}`;
-}
-
-function nomeProfissional(id) {
-  const p = profissionais.find(p => String(p.id) === String(id));
-  return p ? p.nome : `Profissional #${id}`;
 }
 
 
@@ -207,7 +198,7 @@ async function salvarPaciente(event) {
   event.preventDefault();
   const dados = {
     nome:           document.getElementById('inputNome').value.trim(),
-    cpf:            document.getElementById('inputCpf').value.trim(),
+    cpf:            document.getElementById('inputCpf').value.replace(/\D/g, ''),
     email:          document.getElementById('inputEmail').value.trim(),
     telefone:       document.getElementById('inputTelefonePaciente').value.trim(),
     dataNascimento: dataParaBackend(document.getElementById('inputNascimento').value),
@@ -318,8 +309,7 @@ function editarProfissional(id) {
 async function removerProfissional(id) {
   if (!confirm('Remover este profissional?')) return;
   try {
-    // Typo no back: /profissinais/ — quando corrigir, troca para /profissionais/
-    await fetch(`${API}/profissinais/${id}`, { method: 'DELETE' });
+    await fetch(`${API}/profissionais/${id}`, { method: 'DELETE' });
     carregarProfissionais();
   } catch { alert('Erro ao remover.'); }
 }
@@ -328,7 +318,7 @@ async function salvarProfissional(event) {
   event.preventDefault();
   const dados = {
     nome:           document.getElementById('inputNomeProfissional').value.trim(),
-    cpf:            document.getElementById('inputCpfProfissional').value.trim(),
+    cpf:            document.getElementById('inputCpfProfissional').value.replace(/\D/g, ''),
     email:          document.getElementById('inputEmailProfissional').value.trim(),
     telefone:       document.getElementById('inputTelefone').value.trim(),
     dataNascimento: dataParaBackend(document.getElementById('inputNascimentoProf').value),
@@ -413,9 +403,9 @@ function renderizarAgendamentos(lista) {
     item.className = 'item';
     item.innerHTML = `
       <div class="item-info">
-        <span class="item-nome">${nomePaciente(a.idPaciente)}</span>
+        <span class="item-nome">${a.nomePaciente}</span>
         <span class="item-detalhe">
-          Profissional: ${nomeProfissional(a.idProfissional)} &nbsp;|&nbsp;
+          Profissional: ${a.nomeProfissional} &nbsp;|&nbsp;
           ${formatarDataHora(a.dataEHoraMarcadas)}
         </span>
       </div>
@@ -430,7 +420,7 @@ function renderizarAgendamentos(lista) {
 function filtrarAgendamentos() {
   const t = document.getElementById('buscarAgendamento').value.toLowerCase();
   renderizarAgendamentos(
-    agendamentos.filter(a => nomePaciente(a.idPaciente).toLowerCase().includes(t))
+    agendamentos.filter(a => a.nomePaciente.toLowerCase().includes(t))
   );
 }
 
@@ -479,6 +469,7 @@ function carregarHorarios() {
     return;
   }
 
+  // ATENÇÃO: requer idProfissional no AtendimentoResponseDTO do back
   const ocupados = agendamentos
     .filter(a => {
       if (String(a.idProfissional) !== String(profId)) return false;
@@ -519,7 +510,7 @@ async function salvarAgendamento(event) {
   const dados = {
     idPaciente:        Number(pacienteId),
     idProfissional:    Number(profId),
-    dataEHoraMarcadas: new Date(`${data}T${horarioSelecionado}:00`).getTime(),
+    dataEHoraMarcadas: `${data}T${horarioSelecionado}:00`,
   };
 
   try {
@@ -541,7 +532,6 @@ async function salvarAgendamento(event) {
 async function cancelarAgendamento(id) {
   if (!confirm('Desmarcar este agendamento?')) return;
   try {
-    // Requer DELETE /atendimentos/{id} no back
     await fetch(`${API}/atendimentos/${id}`, { method: 'DELETE' });
     carregarAgendamentos();
   } catch { alert('Não foi possível conectar ao servidor.'); }
@@ -642,6 +632,7 @@ function renderizarCalendario() {
 function renderizarPainelDia(d, m, y) {
   const painel = document.getElementById('calDireita');
 
+  // ATENÇÃO: requer idProfissional no AtendimentoResponseDTO do back
   const idsComAgend = new Set(
     agendamentos
       .filter(a => {
