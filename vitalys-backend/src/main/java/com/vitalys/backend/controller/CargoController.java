@@ -1,24 +1,44 @@
 package com.vitalys.backend.controller;
 
-import com.vitalys.backend.model.Cargo;
-import com.vitalys.backend.repository.CargoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.vitalys.backend.dto.CargoRequestDTO;
+import com.vitalys.backend.dto.CargoResponseDTO;
+import com.vitalys.backend.service.CargoService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/vitalys")
 public class CargoController {
 
-    @Autowired
-    private CargoRepository cargoRepository;
+    private final CargoService cargoService;
 
-    @GetMapping(path = "/cargos")
-    public @ResponseBody Iterable<Cargo> findAll() {
-        return cargoRepository.findAll();
+    public CargoController(CargoService cargoService) {
+        this.cargoService = cargoService;
     }
 
+
     @PostMapping(path = "/cargos")
-    public Cargo create(@RequestBody Cargo cargo) {
-        return cargoRepository.save(cargo);
+    public ResponseEntity<CargoResponseDTO> create(@RequestBody @Valid CargoRequestDTO dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(cargoService.registrar(dto));
+    }
+
+    @GetMapping(path = "/cargos")
+    public ResponseEntity<List<CargoResponseDTO>> findAll() {
+        return ResponseEntity.ok(cargoService.findAll());
+    }
+
+    @DeleteMapping(path = "/cargos/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        cargoService.deletar(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping(path = "/cargos/{id}")
+    public ResponseEntity<CargoResponseDTO> update(@PathVariable Long id, @RequestBody @Valid CargoRequestDTO dto) {
+        return ResponseEntity.ok(cargoService.editar(id, dto));
     }
 }

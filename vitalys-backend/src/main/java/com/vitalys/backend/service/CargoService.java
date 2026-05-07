@@ -1,0 +1,45 @@
+package com.vitalys.backend.service;
+
+import com.vitalys.backend.dto.CargoRequestDTO;
+import com.vitalys.backend.dto.CargoResponseDTO;
+import com.vitalys.backend.exception.ResourceNotFoundException;
+import com.vitalys.backend.model.Cargo;
+import com.vitalys.backend.repository.CargoRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class CargoService {
+
+    private final CargoRepository cargoRepository;
+
+    public CargoService(CargoRepository cargoRepository) {
+        this.cargoRepository = cargoRepository;
+    }
+
+    public List<CargoResponseDTO> findAll() {
+        return cargoRepository.findAll().stream()
+                .map(CargoResponseDTO::new)
+                .toList();
+    }
+
+    public CargoResponseDTO registrar(CargoRequestDTO dto) {
+        Cargo cargo = new Cargo();
+        cargo.atualizarDados(dto);
+        return new CargoResponseDTO(cargoRepository.save(cargo));
+    }
+
+    public CargoResponseDTO editar(Long id, CargoRequestDTO dto) {
+        Cargo existente = cargoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cargo", id));
+        existente.atualizarDados(dto);
+        return new CargoResponseDTO(cargoRepository.save(existente));
+    }
+
+    public void deletar(Long id){
+        Cargo existente = cargoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cargo", id));
+        cargoRepository.delete(existente);
+    }
+}

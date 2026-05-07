@@ -1,41 +1,43 @@
 package com.vitalys.backend.controller;
 
-import com.vitalys.backend.dto.RegistrarPacienteDTO;
-import com.vitalys.backend.model.Paciente;
-import com.vitalys.backend.repository.PacienteRepository;
+import com.vitalys.backend.dto.PacienteRequestDTO;
+import com.vitalys.backend.dto.PacienteResponseDTO;
+import com.vitalys.backend.service.PacienteService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+import java.util.List;
 
-@RequestMapping(path="/vitalys")
+@RestController
+@RequestMapping(path = "/vitalys")
 public class PacienteController {
 
-    @Autowired
-    private PacienteRepository pacienteRepository;
+    private final PacienteService pacienteService;
+
+    public PacienteController(PacienteService pacienteService) {
+        this.pacienteService = pacienteService;
+    }
 
     @PostMapping(path = "/pacientes")
-    public Paciente addPaciente(@RequestBody RegistrarPacienteDTO paciente) {
-        Paciente newPaciente = new Paciente().registrar(paciente);
-        return pacienteRepository.save(newPaciente);
+    public ResponseEntity<PacienteResponseDTO> addPaciente(@RequestBody @Valid PacienteRequestDTO paciente) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(pacienteService.registrar(paciente));
     }
 
     @GetMapping(path = "/pacientes")
-    public @ResponseBody Iterable<Paciente> getPacientes() {
-        return pacienteRepository.findAll();
+    public ResponseEntity<List<PacienteResponseDTO>> getPacientes() {
+        return ResponseEntity.ok(pacienteService.findAll());
     }
 
-
     @DeleteMapping(path = "/pacientes/{id}")
-    public void deletePaciente(@PathVariable Long id) {
-        pacienteRepository.deleteById(id);
+    public ResponseEntity<Void> deletePaciente(@PathVariable Long id) {
+        pacienteService.deletar(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping(path = "/pacientes/{id}")
-    public Paciente updatePaciente(@PathVariable Long id, @RequestBody @Valid RegistrarPacienteDTO paciente) {
-        Paciente pacienteExistente = pacienteRepository.findById(id).orElseThrow(() -> new RuntimeException("Paciente não encontrado"));
-        pacienteExistente.atualizar(paciente);
-        return pacienteRepository.save(pacienteExistente);
+    public ResponseEntity<PacienteResponseDTO> updatePaciente(@PathVariable Long id, @RequestBody @Valid PacienteRequestDTO paciente) {
+        return ResponseEntity.ok(pacienteService.editar(id, paciente));
     }
 }
