@@ -4,5 +4,7 @@ import com.vitalys.backend.model.Profissional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProfissionalRepository extends JpaRepository<Profissional, Long> {
-    Long id(Long id);
+    boolean existsByCpf(String cpf);
+    boolean existsByEmail(String email);
+    boolean existsByTelefone(String telefone);
 }
