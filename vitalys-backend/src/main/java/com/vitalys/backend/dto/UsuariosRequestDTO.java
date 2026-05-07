@@ -1,9 +1,12 @@
 package com.vitalys.backend.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public record UsuariosRequestDTO(
-        String login,
-        String senha,
-        Long idCargo,
-        Long idProfissional,
-        Boolean ativo) {
+        @NotBlank String login,
+        @NotBlank String senha,
+        @NotNull Long idCargo,
+        @NotNull Long idProfissional,
+        @NotNull Boolean ativo) {
 }

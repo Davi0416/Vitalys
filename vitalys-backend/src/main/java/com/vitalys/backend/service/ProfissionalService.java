@@ -1,9 +1,7 @@
 package com.vitalys.backend.service;
 
-import com.vitalys.backend.dto.PacienteResponseDTO;
 import com.vitalys.backend.dto.ProfissionalRequestDTO;
 import com.vitalys.backend.dto.ProfissionalResponseDTO;
-import com.vitalys.backend.dto.UsuariosResponseDTO;
 import com.vitalys.backend.exception.ResourceNotFoundException;
 import com.vitalys.backend.model.Profissional;
 import com.vitalys.backend.repository.ProfissionalRepository;

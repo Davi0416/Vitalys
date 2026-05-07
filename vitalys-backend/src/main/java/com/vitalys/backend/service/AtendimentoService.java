@@ -12,7 +12,6 @@ import com.vitalys.backend.repository.ProfissionalRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class AtendimentoService {
@@ -34,7 +33,6 @@ public class AtendimentoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Paciente", dto.idPaciente()));
         Profissional profissional = profissionalRepository.findById(dto.idProfissional())
                 .orElseThrow(() -> new ResourceNotFoundException("Profissional", dto.idProfissional()));
-
         Atendimento a = new Atendimento();
         a.atualizarDados(dto);
         atendimentoRepository.save(a);
@@ -59,7 +57,6 @@ public class AtendimentoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Paciente", dto.idPaciente()));
         Profissional profissional = profissionalRepository.findById(dto.idProfissional())
                 .orElseThrow(() -> new ResourceNotFoundException("Profissional", dto.idProfissional()));
-
         a.atualizarDados(dto);
         atendimentoRepository.save(a);
 
