@@ -64,6 +64,10 @@ function toggleMenu() {
 
 function abrirModal(id) {
   document.getElementById(id).classList.add('aberto');
+  if (id === 'modalAgendamento') {
+    if (pacientes.length === 0)     carregarPacientes();
+    if (profissionais.length === 0) carregarProfissionais();
+  }
 }
 
 function fecharModal(id) {
@@ -547,7 +551,7 @@ async function salvarAgendamento(event) {
   const dados = {
     idPaciente:        Number(pacienteId),
     idProfissional:    Number(profId),
-    dataEHoraMarcadas: new Date(`${data}T${horarioSelecionado}:00`).getTime(),
+    dataEHoraMarcadas: `${data}T${horarioSelecionado}:00`,
   };
 
   try {
