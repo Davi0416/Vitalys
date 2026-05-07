@@ -445,9 +445,9 @@ function renderizarAgendamentos(lista) {
     item.className = 'item';
     item.innerHTML = `
       <div class="item-info">
-        <span class="item-nome">${nomePaciente(a.idPaciente)}</span>
+        <span class="item-nome">${a.nomePaciente || nomePaciente(a.idPaciente)}</span>
         <span class="item-detalhe">
-          Profissional: ${nomeProfissional(a.idProfissional)} &nbsp;|&nbsp;
+          Profissional: ${a.nomeProfissional || nomeProfissional(a.idProfissional)} &nbsp;|&nbsp;
           ${formatarDataHora(a.dataEHoraMarcadas)}
         </span>
       </div>
@@ -462,7 +462,7 @@ function renderizarAgendamentos(lista) {
 function filtrarAgendamentos() {
   const t = document.getElementById('buscarAgendamento').value.toLowerCase();
   renderizarAgendamentos(
-    agendamentos.filter(a => nomePaciente(a.idPaciente).toLowerCase().includes(t))
+    agendamentos.filter(a => (a.nomePaciente || nomePaciente(a.idPaciente)).toLowerCase().includes(t))
   );
 }
 
