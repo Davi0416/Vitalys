@@ -1,14 +1,17 @@
 package com.vitalys.backend.model;
 
 
-import jakarta.persistence.*;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Date;
+import com.vitalys.backend.dto.AtendimentoRequestDTO;
+import com.vitalys.backend.repository.AtendimentoRepository;
+import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "atendimento")
 public class Atendimento {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,7 +23,13 @@ public class Atendimento {
     private Long idProfissional;
 
     @Column(name = "data_e_hora_marcadas")
-    private Date dataEHoraMarcadas;
+    private LocalDateTime dataEHoraMarcadas;
+
+    public void atualizarDados(AtendimentoRequestDTO dto) {
+        this.dataEHoraMarcadas = dto.dataEHoraMarcadas();
+        this.idPaciente = dto.idPaciente();
+        this.idProfissional = dto.idProfissional();
+    }
 
     public void setId(Long id) {
         this.id = id;
@@ -46,11 +55,11 @@ public class Atendimento {
         this.idProfissional = idProfissional;
     }
 
-    public Date getDataEHoraMarcadas() {
+    public LocalDateTime getDataEHoraMarcadas() {
         return dataEHoraMarcadas;
     }
 
-    public void setDataEHoraMarcadas(Date dataEHoraMarcadas) {
+    public void setDataEHoraMarcadas(LocalDateTime dataEHoraMarcadas) {
         this.dataEHoraMarcadas = dataEHoraMarcadas;
     }
 }

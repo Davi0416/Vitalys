@@ -1,11 +1,22 @@
 package com.vitalys.backend.model;
 
+import com.vitalys.backend.dto.UsuariosRequestDTO;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import java.util.Collection;
+import java.util.List;
 
 
 @Entity
 @Table(name = "usuarios")
-public class Usuarios {
+
+@Getter
+@Setter
+public class Usuarios implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,8 +28,9 @@ public class Usuarios {
     @Column(name = "senha")
     private String senha;
 
-    @Column(name = "id_cargo")
-    private Long idCargo;
+    @ManyToOne
+    @JoinColumn(name = "id_cargo")
+    private Cargo cargo;
 
     @Column(name = "id_profissional")
     private Long idProfissional;
@@ -26,51 +38,45 @@ public class Usuarios {
     @Column(name = "ativo")
     private Boolean ativo;
 
-    public void setId(Long id) {
-        this.id = id;
+    public void atualizarDados(UsuariosRequestDTO dto) {
+        this.login = dto.login();
+        this.senha = dto.senha();
+        this.cargo = dto.cargo();
+        this.idProfissional = dto.idProfissional();
+        this.ativo = dto.ativo();
     }
 
-    public Long getId() {
-        return id;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(cargo.getNivelAcesso()));
     }
 
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getSenha() {
+    @Override
+    public String getPassword() {
         return senha;
     }
 
-    public void setSenha(String senha) {
-        this.senha = senha;
+    @Override
+    public String getUsername() {
+        return login;
     }
 
-    public Long getIdCargo() {
-        return idCargo;
-    }
-
-    public void setIdCargo(Long idCargo) {
-        this.idCargo = idCargo;
-    }
-
-    public Long getIdProfissional() {
-        return idProfissional;
-    }
-
-    public void setIdProfissional(Long idProfissional) {
-        this.idProfissional = idProfissional;
-    }
-
-    public Boolean getAtivo() {
+    @Override
+    public boolean isEnabled() {
         return ativo;
     }
 
-    public void setAtivo(Boolean ativo) {
-        this.ativo = ativo;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
     }
 }

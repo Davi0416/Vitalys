@@ -1,24 +1,43 @@
 package com.vitalys.backend.controller;
 
-import com.vitalys.backend.model.Usuarios;
-import com.vitalys.backend.repository.UsuariosRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.vitalys.backend.dto.UsuariosRequestDTO;
+import com.vitalys.backend.dto.UsuariosResponseDTO;
+import com.vitalys.backend.service.UsuariosService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/vitalys")
 public class UsuariosController {
 
-    @Autowired
-    private UsuariosRepository usuariosRepository;
+    private final UsuariosService usuariosService;
+
+    public UsuariosController(UsuariosService usuariosService) {
+        this.usuariosService = usuariosService;
+    }
 
     @PostMapping(path = "/usuarios")
-    public Usuarios create(@RequestBody Usuarios usuario) {
-        return usuariosRepository.save(usuario);
+    public ResponseEntity<UsuariosResponseDTO> create(@RequestBody @Valid UsuariosRequestDTO dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuariosService.registrar(dto));
     }
 
     @GetMapping(path = "/usuarios")
-    public @ResponseBody Iterable<Usuarios> findAll() {
-        return usuariosRepository.findAll();
+    public ResponseEntity<List<UsuariosResponseDTO>> findAll() {
+        return ResponseEntity.ok(usuariosService.findAll());
+    }
+
+    @DeleteMapping(path = "/usuarios/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        usuariosService.deletar(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping(path = "/usuarios/{id}")
+    public ResponseEntity<UsuariosResponseDTO> update(@PathVariable Long id, @RequestBody @Valid UsuariosRequestDTO dto) {
+        return ResponseEntity.ok(usuariosService.editar(id, dto));
     }
 }

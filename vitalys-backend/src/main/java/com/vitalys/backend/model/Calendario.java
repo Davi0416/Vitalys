@@ -1,5 +1,6 @@
 package com.vitalys.backend.model;
 
+import com.vitalys.backend.dto.CalendarioRequestDTO;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -23,6 +24,13 @@ public class Calendario {
     @Column(name = "id_atendimento")
     private Long idAtendimento;
 
+    public void atualizarDados(CalendarioRequestDTO dto) {
+        this.data = dto.data();
+        this.nome = dto.nome();
+        this.tipo = dto.tipo();
+        this.idAtendimento = dto.idAtendimento();
+    }
+
     public Long getId() {
         return id;
     }
@@ -33,10 +41,6 @@ public class Calendario {
 
     public String getNome() {
         return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
     }
 
     public Date getData() {
@@ -51,15 +55,7 @@ public class Calendario {
         return tipo;
     }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
-
     public Long getIdAtendimento() {
         return idAtendimento;
-    }
-
-    public void setIdAtendimento(Long idAtendimento) {
-        this.idAtendimento = idAtendimento;
     }
 }
