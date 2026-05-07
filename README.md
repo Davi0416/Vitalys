@@ -6,6 +6,17 @@ API REST para gerenciamento de clínicas multidisciplinares, desenvolvida com **
 
 Permite cadastrar pacientes, profissionais e usuários, realizar agendamentos, gerenciar cargos e visualizar eventos no calendário.
 
+## Demo
+
+| Serviço | URL |
+|---|---|
+| Frontend | https://vitalys0416.netlify.app/login.html |
+| Backend (API) | https://vitalys-gc27.onrender.com |
+
+**Acesso demo:** login `admin` / senha `admin123`
+
+> O backend está hospedado no plano gratuito do Render e pode demorar até 50 segundos para responder após um período de inatividade.
+
 ---
 
 ## Índice
@@ -428,7 +439,7 @@ vitalys-backend/
 - [x] Autenticação com Spring Security e JWT
 - [x] Validação de dados com Jakarta Validation
 - [x] Tratamento centralizado de exceções
-- [ ] Deploy em produção
+- [x] Deploy em produção (Render + Neon + Netlify)
 
 ---
 
