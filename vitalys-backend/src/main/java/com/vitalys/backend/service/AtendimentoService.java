@@ -2,6 +2,7 @@ package com.vitalys.backend.service;
 
 import com.vitalys.backend.dto.AtendimentoRequestDTO;
 import com.vitalys.backend.dto.AtendimentoResponseDTO;
+import com.vitalys.backend.exception.BusinessException;
 import com.vitalys.backend.exception.ResourceNotFoundException;
 import com.vitalys.backend.model.Atendimento;
 import com.vitalys.backend.model.Paciente;
@@ -12,7 +13,6 @@ import com.vitalys.backend.repository.ProfissionalRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class AtendimentoService {
@@ -29,12 +29,21 @@ public class AtendimentoService {
         this.profissionalRepository = profissionalRepository;
     }
 
+    private void verificarDadosUnicos(AtendimentoRequestDTO dto) {
+        if (atendimentoRepository.existsByIdPaciente(dto.idPaciente())){
+            throw new BusinessException("Paciente já possui um atendimento agendado.");
+        }
+        if (atendimentoRepository.existsByIdProfissionalAndDataEHoraMarcadas(dto.idProfissional(), dto.dataEHoraMarcadas())) {
+            throw new BusinessException("Profissional já possui atendimento nessa data e hora.");
+        }
+    }
+
     public AtendimentoResponseDTO registrar(AtendimentoRequestDTO dto) {
         Paciente paciente = pacienteRepository.findById(dto.idPaciente())
                 .orElseThrow(() -> new ResourceNotFoundException("Paciente", dto.idPaciente()));
         Profissional profissional = profissionalRepository.findById(dto.idProfissional())
                 .orElseThrow(() -> new ResourceNotFoundException("Profissional", dto.idProfissional()));
-
+        verificarDadosUnicos(dto);
         Atendimento a = new Atendimento();
         a.atualizarDados(dto);
         atendimentoRepository.save(a);
@@ -59,7 +68,7 @@ public class AtendimentoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Paciente", dto.idPaciente()));
         Profissional profissional = profissionalRepository.findById(dto.idProfissional())
                 .orElseThrow(() -> new ResourceNotFoundException("Profissional", dto.idProfissional()));
-
+        verificarDadosUnicos(dto);
         a.atualizarDados(dto);
         atendimentoRepository.save(a);
 

@@ -3,6 +3,7 @@ package com.vitalys.backend.controller;
 import com.vitalys.backend.dto.CargoRequestDTO;
 import com.vitalys.backend.dto.CargoResponseDTO;
 import com.vitalys.backend.service.CargoService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class CargoController {
 
 
     @PostMapping(path = "/cargos")
-    public ResponseEntity<CargoResponseDTO> create(@RequestBody CargoRequestDTO dto) {
+    public ResponseEntity<CargoResponseDTO> create(@RequestBody @Valid CargoRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(cargoService.registrar(dto));
     }
 
@@ -37,7 +38,7 @@ public class CargoController {
     }
 
     @PutMapping(path = "/cargos/{id}")
-    public ResponseEntity<CargoResponseDTO> update(@PathVariable Long id, @RequestBody CargoRequestDTO dto) {
+    public ResponseEntity<CargoResponseDTO> update(@PathVariable Long id, @RequestBody @Valid CargoRequestDTO dto) {
         return ResponseEntity.ok(cargoService.editar(id, dto));
     }
 }
