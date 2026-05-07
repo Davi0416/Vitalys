@@ -26,13 +26,13 @@
         <h1>Login</h1>
 
         <form action="#" method="post">
-          <label for="email">Email:</label>
-          <input type="email" name="userEmail" id="email" required />
-          
+          <label for="email">Login:</label>
+          <input type="text" name="userEmail" id="email" required autocomplete="username" />
 
           <label for="password">Senha:</label>
-          <input type="password" name="userPassword" id="password" required />
-          
+          <input type="password" name="userPassword" id="password" required autocomplete="current-password" />
+
+          <p id="msgErroLogin" style="color: var(--cor-erro, #e05555); font-size: 0.875rem; min-height: 1.2em;"></p>
 
           <div class="login-actions">
             <button type="submit" class="botaoEntrar" id="enviarLogin">
@@ -44,6 +44,6 @@
       </section>
     </main>
 
-    <script src="scripts/script.js"></script>
+    <script src="scripts/login.js"></script>
   </body>
 </html>

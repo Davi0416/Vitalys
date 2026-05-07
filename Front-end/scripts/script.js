@@ -79,6 +79,34 @@ function fecharModalFora(event, id) {
 
 const API = 'http://localhost:8080/vitalys';
 
+// AUTH — protege a página e injeta o token em todas as requisições
+function getToken() { return localStorage.getItem('vitalys-token'); }
+
+if (!getToken()) window.location.href = 'login.html';
+
+async function apiFetch(url, options = {}) {
+  const token = getToken();
+  const res = await fetch(url, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+      ...(options.headers || {})
+    }
+  });
+  if (res.status === 401 || res.status === 403) {
+    localStorage.removeItem('vitalys-token');
+    window.location.href = 'login.html';
+    return null;
+  }
+  return res;
+}
+
+function logout() {
+  localStorage.removeItem('vitalys-token');
+  window.location.href = 'login.html';
+}
+
 function formatarData(data) {
   if (!data) return '-';
   const d = new Date(data);
@@ -88,7 +116,6 @@ function formatarData(data) {
 
 function formatarDataHora(valor) {
   if (!valor) return '-';
-  // Suporta tanto LocalDateTime string ("2025-05-01T10:00:00") quanto timestamp
   const d = new Date(valor);
   if (isNaN(d)) return '-';
   return d.toLocaleDateString('pt-BR') + ' às ' +
@@ -130,7 +157,8 @@ let pacienteEditandoId = null;
 
 async function carregarPacientes() {
   try {
-    const res = await fetch(`${API}/pacientes`);
+    const res = await apiFetch(`${API}/pacientes`);
+    if (!res) return;
     pacientes = await res.json();
     renderizarPacientes(pacientes);
   } catch {
@@ -206,14 +234,13 @@ async function salvarPaciente(event) {
   };
   try {
     const res = pacienteEditandoId
-      ? await fetch(`${API}/pacientes/${pacienteEditandoId}`, {
-          method: 'PUT', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(dados)
+      ? await apiFetch(`${API}/pacientes/${pacienteEditandoId}`, {
+          method: 'PUT', body: JSON.stringify(dados)
         })
-      : await fetch(`${API}/pacientes`, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(dados)
+      : await apiFetch(`${API}/pacientes`, {
+          method: 'POST', body: JSON.stringify(dados)
         });
+    if (!res) return;
     if (res.ok) { fecharModal('modalPaciente'); carregarPacientes(); }
     else alert('Erro ao salvar paciente.');
   } catch { alert('Não foi possível conectar ao servidor.'); }
@@ -222,7 +249,7 @@ async function salvarPaciente(event) {
 async function removerPaciente(id) {
   if (!confirm('Remover este paciente?')) return;
   try {
-    await fetch(`${API}/pacientes/${id}`, { method: 'DELETE' });
+    await apiFetch(`${API}/pacientes/${id}`, { method: 'DELETE' });
     carregarPacientes();
   } catch { alert('Erro ao remover.'); }
 }
@@ -243,7 +270,8 @@ let profEditandoId = null;
 
 async function carregarProfissionais() {
   try {
-    const res = await fetch(`${API}/profissionais`);
+    const res = await apiFetch(`${API}/profissionais`);
+    if (!res) return;
     profissionais = await res.json();
     renderizarProfissionais(profissionais);
     atualizarSelectProfissionaisAgendamento();
@@ -309,7 +337,7 @@ function editarProfissional(id) {
 async function removerProfissional(id) {
   if (!confirm('Remover este profissional?')) return;
   try {
-    await fetch(`${API}/profissionais/${id}`, { method: 'DELETE' });
+    await apiFetch(`${API}/profissionais/${id}`, { method: 'DELETE' });
     carregarProfissionais();
   } catch { alert('Erro ao remover.'); }
 }
@@ -325,14 +353,13 @@ async function salvarProfissional(event) {
   };
   try {
     const res = profEditandoId
-      ? await fetch(`${API}/profissionais/${profEditandoId}`, {
-          method: 'PUT', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(dados)
+      ? await apiFetch(`${API}/profissionais/${profEditandoId}`, {
+          method: 'PUT', body: JSON.stringify(dados)
         })
-      : await fetch(`${API}/profissionais`, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(dados)
+      : await apiFetch(`${API}/profissionais`, {
+          method: 'POST', body: JSON.stringify(dados)
         });
+    if (!res) return;
     if (res.ok) {
       fecharModal('modalProfissional');
       profEditandoId = null;
@@ -364,7 +391,8 @@ const HORARIOS_DISPONIVEIS = [
 
 async function carregarAgendamentos() {
   try {
-    const res = await fetch(`${API}/atendimentos`);
+    const res = await apiFetch(`${API}/atendimentos`);
+    if (!res) return;
     agendamentos = await res.json();
     renderizarAgendamentos(agendamentos);
   } catch {
@@ -469,7 +497,6 @@ function carregarHorarios() {
     return;
   }
 
-  // ATENÇÃO: requer idProfissional no AtendimentoResponseDTO do back
   const ocupados = agendamentos
     .filter(a => {
       if (String(a.idProfissional) !== String(profId)) return false;
@@ -514,11 +541,11 @@ async function salvarAgendamento(event) {
   };
 
   try {
-    const res = await fetch(`${API}/atendimentos`, {
+    const res = await apiFetch(`${API}/atendimentos`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(dados),
     });
+    if (!res) return;
     if (res.ok) {
       fecharModal('modalAgendamento');
       document.getElementById('formAgendamento').reset();
@@ -532,7 +559,7 @@ async function salvarAgendamento(event) {
 async function cancelarAgendamento(id) {
   if (!confirm('Desmarcar este agendamento?')) return;
   try {
-    await fetch(`${API}/atendimentos/${id}`, { method: 'DELETE' });
+    await apiFetch(`${API}/atendimentos/${id}`, { method: 'DELETE' });
     carregarAgendamentos();
   } catch { alert('Não foi possível conectar ao servidor.'); }
 }
@@ -632,7 +659,6 @@ function renderizarCalendario() {
 function renderizarPainelDia(d, m, y) {
   const painel = document.getElementById('calDireita');
 
-  // ATENÇÃO: requer idProfissional no AtendimentoResponseDTO do back
   const idsComAgend = new Set(
     agendamentos
       .filter(a => {
