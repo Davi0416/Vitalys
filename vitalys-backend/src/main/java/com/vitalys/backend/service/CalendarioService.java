@@ -8,7 +8,6 @@ import com.vitalys.backend.repository.CalendarioRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CalendarioService {

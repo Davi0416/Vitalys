@@ -3,12 +3,10 @@ package com.vitalys.backend.controller;
 
 import com.vitalys.backend.dto.ProfissionalRequestDTO;
 import com.vitalys.backend.dto.ProfissionalResponseDTO;
-import com.vitalys.backend.model.Profissional;
-import com.vitalys.backend.repository.ProfissionalRepository;
 import com.vitalys.backend.service.ProfissionalService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,12 +17,12 @@ public class ProfissionalController {
 
     private final ProfissionalService profissionalService;
 
-    public ProfissionalController(ProfissionalRepository profissionalRepository, ProfissionalService profissionalService) {
+    public ProfissionalController(ProfissionalService profissionalService) {
         this.profissionalService = profissionalService;
     }
 
     @PostMapping(path="/profissionais")
-    public ResponseEntity<ProfissionalResponseDTO> registrar(@RequestBody @Validated ProfissionalRequestDTO dto){
+    public ResponseEntity<ProfissionalResponseDTO> registrar(@RequestBody @Valid ProfissionalRequestDTO dto){
         return ResponseEntity.status(HttpStatus.CREATED).body(profissionalService.registrar(dto));
     }
 
@@ -42,7 +40,7 @@ public class ProfissionalController {
     @PutMapping("/profissionais/{id}")
     public ResponseEntity<ProfissionalResponseDTO> updateProfissional(
             @PathVariable Long id,
-            @RequestBody @Validated ProfissionalRequestDTO profissional) {
+            @RequestBody @Valid ProfissionalRequestDTO profissional) {
         return ResponseEntity.ok(profissionalService.editar(id, profissional));
     }
 }

@@ -1,15 +1,14 @@
 package com.vitalys.backend.dto;
 
 import com.vitalys.backend.model.Profissional;
-import jakarta.validation.constraints.NotBlank;
 
 import java.util.Date;
 
 public record ProfissionalResponseDTO(
         Long id,
-        @NotBlank String nome,
+        String nome,
         String email,
-        @NotBlank String cpf,
+        String cpf,
         String telefone,
         Date dataNascimento)
 {

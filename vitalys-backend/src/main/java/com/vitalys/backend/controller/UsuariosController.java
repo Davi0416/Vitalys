@@ -3,6 +3,7 @@ package com.vitalys.backend.controller;
 import com.vitalys.backend.dto.UsuariosRequestDTO;
 import com.vitalys.backend.dto.UsuariosResponseDTO;
 import com.vitalys.backend.service.UsuariosService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class UsuariosController {
     }
 
     @PostMapping(path = "/usuarios")
-    public ResponseEntity<UsuariosResponseDTO> create(@RequestBody UsuariosRequestDTO dto) {
+    public ResponseEntity<UsuariosResponseDTO> create(@RequestBody @Valid UsuariosRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(usuariosService.registrar(dto));
     }
 
@@ -36,7 +37,7 @@ public class UsuariosController {
     }
 
     @PutMapping(path = "/usuarios/{id}")
-    public ResponseEntity<UsuariosResponseDTO> update(@PathVariable Long id, @RequestBody UsuariosRequestDTO dto) {
+    public ResponseEntity<UsuariosResponseDTO> update(@PathVariable Long id, @RequestBody @Valid UsuariosRequestDTO dto) {
         return ResponseEntity.ok(usuariosService.editar(id, dto));
     }
 }
