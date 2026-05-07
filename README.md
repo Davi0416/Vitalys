@@ -28,6 +28,8 @@ Permite cadastrar pacientes, profissionais e usuários, realizar agendamentos, g
 | Java | 21 (LTS) | Linguagem principal |
 | Spring Boot | 3.5.13 | Framework base da aplicação |
 | Spring Data JPA | (gerenciada) | Camada de persistência com Hibernate |
+| Spring Security | (gerenciada) | Autenticação e autorização |
+| Auth0 Java JWT | 4.4.0 | Geração e validação de tokens JWT |
 | MySQL | 9.6 | Banco de dados relacional |
 | Maven | (wrapper incluso) | Gerenciamento de dependências e build |
 | Docker | — | Container do banco de dados |
@@ -73,6 +75,7 @@ spring.datasource.password=REDACTED
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 spring.jpa.hibernate.ddl-auto=none
 spring.jpa.show-sql=true
+api.security.token.secret=seu-secret-jwt-aqui
 ```
 
 > **Atenção:** o arquivo `application.properties` está no `.gitignore` para proteger as credenciais. Crie-o manualmente após clonar o repositório.
@@ -109,6 +112,30 @@ http://localhost:8080
 
 ---
 
+## Autenticação
+
+A API utiliza **JWT (JSON Web Token)** para autenticação. Todos os endpoints, exceto `/vitalys/auth/login`, exigem um token válido no header:
+
+```
+Authorization: Bearer <token>
+```
+
+### Login
+
+```http
+POST /vitalys/auth/login
+Content-Type: application/json
+
+{
+  "login": "admin",
+  "senha": "123456"
+}
+```
+
+**Response `200 OK`:** retorna o token JWT como texto simples.
+
+---
+
 ## Endpoints
 
 Todos os endpoints são prefixados com `/vitalys`.
@@ -128,6 +155,7 @@ Todos os endpoints são prefixados com `/vitalys`.
 ```http
 POST /vitalys/pacientes
 Content-Type: application/json
+Authorization: Bearer <token>
 
 {
   "nome": "João Silva",
@@ -139,7 +167,7 @@ Content-Type: application/json
 }
 ```
 
-**Response `200 OK`:**
+**Response `201 Created`:**
 ```json
 {
   "id": 1,
@@ -169,6 +197,7 @@ Content-Type: application/json
 ```http
 POST /vitalys/profissionais
 Content-Type: application/json
+Authorization: Bearer <token>
 
 {
   "nome": "Dr. Carlos Lima",
@@ -180,7 +209,7 @@ Content-Type: application/json
 }
 ```
 
-**Response `200 OK`:**
+**Response `201 Created`:**
 ```json
 {
   "id": 1,
@@ -201,6 +230,8 @@ Content-Type: application/json
 |---|---|---|
 | `GET` | `/vitalys/atendimentos` | Lista todos os atendimentos |
 | `POST` | `/vitalys/atendimentos` | Agenda um novo atendimento |
+| `PUT` | `/vitalys/atendimentos/{id}` | Atualiza um atendimento |
+| `DELETE` | `/vitalys/atendimentos/{id}` | Cancela um atendimento |
 
 #### Exemplo — Agendar atendimento
 
@@ -208,6 +239,7 @@ Content-Type: application/json
 ```http
 POST /vitalys/atendimentos
 Content-Type: application/json
+Authorization: Bearer <token>
 
 {
   "idPaciente": 1,
@@ -216,7 +248,7 @@ Content-Type: application/json
 }
 ```
 
-**Response `200 OK`:**
+**Response `201 Created`:**
 ```json
 {
   "id": 1,
@@ -234,6 +266,8 @@ Content-Type: application/json
 |---|---|---|
 | `GET` | `/vitalys/cargos` | Lista todos os cargos |
 | `POST` | `/vitalys/cargos` | Cadastra um novo cargo |
+| `PUT` | `/vitalys/cargos/{id}` | Atualiza um cargo |
+| `DELETE` | `/vitalys/cargos/{id}` | Remove um cargo |
 
 #### Exemplo — Listar cargos
 
@@ -270,6 +304,7 @@ Content-Type: application/json
 ```http
 POST /vitalys/calendario
 Content-Type: application/json
+Authorization: Bearer <token>
 
 {
   "nome": "Consulta Dr. Carlos",
@@ -285,22 +320,42 @@ Content-Type: application/json
 ```
 vitalys-backend/
 ├── database/
-│   └── schema.sql                        # Script de criação das tabelas
+│   └── schema.sql                          # Script de criação das tabelas
 ├── src/
 │   └── main/
 │       ├── java/com/vitalys/backend/
 │       │   ├── controller/
 │       │   │   ├── AtendimentoController.java
+│       │   │   ├── AuthController.java
 │       │   │   ├── CalendarioController.java
 │       │   │   ├── CargoController.java
 │       │   │   ├── PacienteController.java
 │       │   │   ├── ProfissionalController.java
 │       │   │   └── UsuariosController.java
 │       │   ├── dto/
+│       │   │   ├── AtendimentoRequestDTO.java
 │       │   │   ├── AtendimentoResponseDTO.java
-│       │   │   ├── RegistrarAtendimentoDTO.java
-│       │   │   ├── RegistrarPacienteDTO.java
-│       │   │   └── RegistrarProfissionalDTO.java
+│       │   │   ├── CalendarioRequestDTO.java
+│       │   │   ├── CalendarioResponseDTO.java
+│       │   │   ├── CargoRequestDTO.java
+│       │   │   ├── CargoResponseDTO.java
+│       │   │   ├── ErrorResponseDTO.java
+│       │   │   ├── LoginRequestDTO.java
+│       │   │   ├── PacienteRequestDTO.java
+│       │   │   ├── PacienteResponseDTO.java
+│       │   │   ├── ProfissionalRequestDTO.java
+│       │   │   ├── ProfissionalResponseDTO.java
+│       │   │   ├── UsuariosRequestDTO.java
+│       │   │   └── UsuariosResponseDTO.java
+│       │   ├── exception/
+│       │   │   ├── BusinessException.java
+│       │   │   ├── ConflictException.java
+│       │   │   ├── GlobalExceptionHandler.java
+│       │   │   └── ResourceNotFoundException.java
+│       │   ├── infra/security/
+│       │   │   ├── SecurityConfig.java
+│       │   │   ├── SecurityFilter.java
+│       │   │   └── TokenService.java
 │       │   ├── model/
 │       │   │   ├── Atendimento.java
 │       │   │   ├── Calendario.java
@@ -315,10 +370,18 @@ vitalys-backend/
 │       │   │   ├── PacienteRepository.java
 │       │   │   ├── ProfissionalRepository.java
 │       │   │   └── UsuariosRepository.java
+│       │   ├── service/
+│       │   │   ├── AtendimentoService.java
+│       │   │   ├── AuthorizationService.java
+│       │   │   ├── CalendarioService.java
+│       │   │   ├── CargoService.java
+│       │   │   ├── PacienteService.java
+│       │   │   ├── ProfissionalService.java
+│       │   │   └── UsuariosService.java
 │       │   ├── CorsConfig.java
 │       │   └── VitalysBackendApplication.java
 │       └── resources/
-│           └── application.properties    # Credenciais locais (não versionado)
+│           └── application.properties      # Credenciais locais (não versionado)
 ├── docker-compose.yml
 └── pom.xml
 ```
@@ -361,11 +424,10 @@ vitalys-backend/
 - [x] Gestão de usuários
 - [x] Calendário de eventos
 - [x] Configuração de CORS para integração com frontend
-- [x] DTOs de entrada e saída
-- [ ] Autenticação com Spring Security e JWT
-- [ ] Validação de dados com Jakarta Validation
-- [ ] Tratamento centralizado de exceções
-- [ ] Testes unitários e de integração
+- [x] DTOs de entrada e saída como Java Records
+- [x] Autenticação com Spring Security e JWT
+- [x] Validação de dados com Jakarta Validation
+- [x] Tratamento centralizado de exceções
 - [ ] Deploy em produção
 
 ---
