@@ -38,7 +38,7 @@ if (localStorage.getItem('vitalys-token')) {
 }
 
 // LOGIN
-const API_AUTH = 'http://localhost:8080/vitalys';
+const API_AUTH = 'https://vitalys-gc27.onrender.com/vitalys';
 
 document.querySelector('form').addEventListener('submit', async (e) => {
   e.preventDefault();

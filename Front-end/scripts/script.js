@@ -77,7 +77,7 @@ function fecharModalFora(event, id) {
 
 //  UTILITÁRIOS
 
-const API = 'http://localhost:8080/vitalys';
+const API = 'https://vitalys-gc27.onrender.com/vitalys';
 
 // AUTH — protege a página e injeta o token em todas as requisições
 function getToken() { return localStorage.getItem('vitalys-token'); }
