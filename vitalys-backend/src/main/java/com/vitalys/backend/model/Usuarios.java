@@ -2,11 +2,21 @@ package com.vitalys.backend.model;
 
 import com.vitalys.backend.dto.UsuariosRequestDTO;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import java.util.Collection;
+import java.util.List;
 
 
 @Entity
 @Table(name = "usuarios")
-public class Usuarios {
+
+@Getter
+@Setter
+public class Usuarios implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,8 +28,9 @@ public class Usuarios {
     @Column(name = "senha")
     private String senha;
 
-    @Column(name = "id_cargo")
-    private Long idCargo;
+    @ManyToOne
+    @JoinColumn(name = "id_cargo")
+    private Cargo cargo;
 
     @Column(name = "id_profissional")
     private Long idProfissional;
@@ -30,32 +41,42 @@ public class Usuarios {
     public void atualizarDados(UsuariosRequestDTO dto) {
         this.login = dto.login();
         this.senha = dto.senha();
-        this.idCargo = dto.idCargo();
+        this.cargo = dto.cargo();
         this.idProfissional = dto.idProfissional();
         this.ativo = dto.ativo();
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(cargo.getNivelAcesso()));
     }
 
-    public Long getId() {
-        return id;
+    @Override
+    public String getPassword() {
+        return senha;
     }
 
-    public String getLogin() {
+    @Override
+    public String getUsername() {
         return login;
     }
 
-    public Long getIdCargo() {
-        return idCargo;
-    }
-
-    public Long getIdProfissional() {
-        return idProfissional;
-    }
-
-    public Boolean getAtivo() {
+    @Override
+    public boolean isEnabled() {
         return ativo;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
     }
 }
