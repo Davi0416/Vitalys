@@ -33,10 +33,10 @@ function applyTheme(theme) {
   localStorage.setItem('vitalys-theme-preference', theme.name);
 }
 
-
 //  NAVEGAÇÃO
 
 function mostrarTela(id, link) {
+  // Fecha o menu hambúrguer ao navegar
   document.querySelector('.menuNavegacao').classList.remove('aberto');
   document.getElementById('btnHamburger').classList.remove('aberto');
 
@@ -114,9 +114,9 @@ function formatarData(data) {
   return d.toLocaleDateString('pt-BR');
 }
 
-function formatarDataHora(valor) {
-  if (!valor) return '-';
-  const d = new Date(valor);
+function formatarDataHora(timestamp) {
+  if (!timestamp) return '-';
+  const d = new Date(timestamp);
   if (isNaN(d)) return '-';
   return d.toLocaleDateString('pt-BR') + ' às ' +
     d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
@@ -147,6 +147,16 @@ function mascaraTelefone(input) {
   v = v.replace(/(\d{2})(\d)/, '($1) $2');
   v = v.replace(/(\d{5})(\d)/, '$1-$2');
   input.value = v;
+}
+
+function nomePaciente(id) {
+  const p = pacientes.find(p => String(p.id) === String(id));
+  return p ? p.nome : `Paciente #${id}`;
+}
+
+function nomeProfissional(id) {
+  const p = profissionais.find(p => String(p.id) === String(id));
+  return p ? p.nome : `Profissional #${id}`;
 }
 
 
@@ -226,7 +236,7 @@ async function salvarPaciente(event) {
   event.preventDefault();
   const dados = {
     nome:           document.getElementById('inputNome').value.trim(),
-    cpf:            document.getElementById('inputCpf').value.replace(/\D/g, ''),
+    cpf:            document.getElementById('inputCpf').value.trim(),
     email:          document.getElementById('inputEmail').value.trim(),
     telefone:       document.getElementById('inputTelefonePaciente').value.trim(),
     dataNascimento: dataParaBackend(document.getElementById('inputNascimento').value),
@@ -346,7 +356,7 @@ async function salvarProfissional(event) {
   event.preventDefault();
   const dados = {
     nome:           document.getElementById('inputNomeProfissional').value.trim(),
-    cpf:            document.getElementById('inputCpfProfissional').value.replace(/\D/g, ''),
+    cpf:            document.getElementById('inputCpfProfissional').value.trim(),
     email:          document.getElementById('inputEmailProfissional').value.trim(),
     telefone:       document.getElementById('inputTelefone').value.trim(),
     dataNascimento: dataParaBackend(document.getElementById('inputNascimentoProf').value),
@@ -431,9 +441,9 @@ function renderizarAgendamentos(lista) {
     item.className = 'item';
     item.innerHTML = `
       <div class="item-info">
-        <span class="item-nome">${a.nomePaciente}</span>
+        <span class="item-nome">${nomePaciente(a.idPaciente)}</span>
         <span class="item-detalhe">
-          Profissional: ${a.nomeProfissional} &nbsp;|&nbsp;
+          Profissional: ${nomeProfissional(a.idProfissional)} &nbsp;|&nbsp;
           ${formatarDataHora(a.dataEHoraMarcadas)}
         </span>
       </div>
@@ -448,7 +458,7 @@ function renderizarAgendamentos(lista) {
 function filtrarAgendamentos() {
   const t = document.getElementById('buscarAgendamento').value.toLowerCase();
   renderizarAgendamentos(
-    agendamentos.filter(a => a.nomePaciente.toLowerCase().includes(t))
+    agendamentos.filter(a => nomePaciente(a.idPaciente).toLowerCase().includes(t))
   );
 }
 
@@ -537,7 +547,7 @@ async function salvarAgendamento(event) {
   const dados = {
     idPaciente:        Number(pacienteId),
     idProfissional:    Number(profId),
-    dataEHoraMarcadas: `${data}T${horarioSelecionado}:00`,
+    dataEHoraMarcadas: new Date(`${data}T${horarioSelecionado}:00`).getTime(),
   };
 
   try {

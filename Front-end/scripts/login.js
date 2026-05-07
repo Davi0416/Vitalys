@@ -32,7 +32,7 @@ function applyTheme(theme) {
   localStorage.setItem('vitalys-theme-preference', theme.name);
 }
 
-// Se já tem token válido, vai direto pro dashboard
+// Se já tem token, vai direto pro dashboard
 if (localStorage.getItem('vitalys-token')) {
   window.location.href = 'dashboard.html';
 }
@@ -45,7 +45,7 @@ document.querySelector('form').addEventListener('submit', async (e) => {
 
   const btnEntrar = document.getElementById('enviarLogin');
   const msgErro   = document.getElementById('msgErroLogin');
-  const login     = document.getElementById('email').value.trim();
+  const login     = document.getElementById('login').value.trim();
   const senha     = document.getElementById('password').value;
 
   btnEntrar.disabled    = true;
