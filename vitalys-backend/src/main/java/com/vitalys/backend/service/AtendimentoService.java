@@ -29,13 +29,16 @@ public class AtendimentoService {
         this.profissionalRepository = profissionalRepository;
     }
 
-    private void verificarDadosUnicos(AtendimentoRequestDTO dto) {
-        if (atendimentoRepository.existsByIdPaciente(dto.idPaciente())){
-            throw new BusinessException("Paciente já possui um atendimento agendado.");
-        }
-        if (atendimentoRepository.existsByIdProfissionalAndDataEHoraMarcadas(dto.idProfissional(), dto.dataEHoraMarcadas())) {
-            throw new BusinessException("Profissional já possui atendimento nessa data e hora.");
-        }
+    private void verificarDadosUnicos(AtendimentoRequestDTO dto, Long idAtual) {
+        boolean pacienteExiste = idAtual != null
+                ? atendimentoRepository.existsByIdPacienteAndIdNot(dto.idPaciente(), idAtual)
+                : atendimentoRepository.existsByIdPaciente(dto.idPaciente());
+        if (pacienteExiste) throw new BusinessException("Paciente já possui um atendimento agendado.");
+
+        boolean horarioExiste = idAtual != null
+                ? atendimentoRepository.existsByIdProfissionalAndDataEHoraMarcadasAndIdNot(dto.idProfissional(), dto.dataEHoraMarcadas(), idAtual)
+                : atendimentoRepository.existsByIdProfissionalAndDataEHoraMarcadas(dto.idProfissional(), dto.dataEHoraMarcadas());
+        if (horarioExiste) throw new BusinessException("Profissional já possui atendimento nessa data e hora.");
     }
 
     public AtendimentoResponseDTO registrar(AtendimentoRequestDTO dto) {
@@ -43,7 +46,7 @@ public class AtendimentoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Paciente", dto.idPaciente()));
         Profissional profissional = profissionalRepository.findById(dto.idProfissional())
                 .orElseThrow(() -> new ResourceNotFoundException("Profissional", dto.idProfissional()));
-        verificarDadosUnicos(dto);
+        verificarDadosUnicos(dto, null);
         Atendimento a = new Atendimento();
         a.atualizarDados(dto);
         atendimentoRepository.save(a);
@@ -68,16 +71,16 @@ public class AtendimentoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Paciente", dto.idPaciente()));
         Profissional profissional = profissionalRepository.findById(dto.idProfissional())
                 .orElseThrow(() -> new ResourceNotFoundException("Profissional", dto.idProfissional()));
-        verificarDadosUnicos(dto);
+        verificarDadosUnicos(dto, id);
         a.atualizarDados(dto);
         atendimentoRepository.save(a);
 
         return new AtendimentoResponseDTO(a.getId(), profissional.getId(), paciente.getNome(), profissional.getNome(), a.getDataEHoraMarcadas());
     }
 
-    public void deletar(Long id){
+    public void deletar(Long id) {
         Atendimento atendimento = atendimentoRepository.findById(id)
-                        .orElseThrow(() -> new ResourceNotFoundException("Atendimento", id));
+                .orElseThrow(() -> new ResourceNotFoundException("Atendimento", id));
         atendimentoRepository.delete(atendimento);
     }
 }

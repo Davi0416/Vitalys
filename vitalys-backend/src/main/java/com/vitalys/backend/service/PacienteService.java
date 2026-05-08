@@ -19,16 +19,21 @@ public class PacienteService {
         this.pacienteRepository = pacienteRepository;
     }
 
-    private void verificarDadosUnicos(PacienteRequestDTO dto){
-        if (pacienteRepository.existsByCpf(dto.cpf())) {
-            throw new ConflictException("CPF", dto.cpf());
-        }
-        if (pacienteRepository.existsByEmail(dto.email())) {
-            throw new ConflictException("email", dto.email());
-        }
-        if (pacienteRepository.existsByTelefone(dto.telefone())) {
-            throw new ConflictException("telefone", dto.telefone());
-        }
+    private void verificarDadosUnicos(PacienteRequestDTO dto, Long idAtual) {
+        boolean cpfExiste = idAtual != null
+                ? pacienteRepository.existsByCpfAndIdNot(dto.cpf(), idAtual)
+                : pacienteRepository.existsByCpf(dto.cpf());
+        if (cpfExiste) throw new ConflictException("CPF", dto.cpf());
+
+        boolean emailExiste = idAtual != null
+                ? pacienteRepository.existsByEmailAndIdNot(dto.email(), idAtual)
+                : pacienteRepository.existsByEmail(dto.email());
+        if (emailExiste) throw new ConflictException("email", dto.email());
+
+        boolean telefoneExiste = idAtual != null
+                ? pacienteRepository.existsByTelefoneAndIdNot(dto.telefone(), idAtual)
+                : pacienteRepository.existsByTelefone(dto.telefone());
+        if (telefoneExiste) throw new ConflictException("telefone", dto.telefone());
     }
 
     public List<PacienteResponseDTO> findAll() {
@@ -38,7 +43,7 @@ public class PacienteService {
     }
 
     public PacienteResponseDTO registrar(PacienteRequestDTO dto) {
-        verificarDadosUnicos(dto);
+        verificarDadosUnicos(dto, null);
         Paciente p = new Paciente();
         p.atualizarDados(dto);
         return new PacienteResponseDTO(pacienteRepository.save(p));
@@ -47,12 +52,12 @@ public class PacienteService {
     public PacienteResponseDTO editar(Long id, PacienteRequestDTO dto) {
         Paciente p = pacienteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Paciente", id));
-        verificarDadosUnicos(dto);
+        verificarDadosUnicos(dto, id);
         p.atualizarDados(dto);
         return new PacienteResponseDTO(pacienteRepository.save(p));
     }
 
-    public void deletar(Long id){
+    public void deletar(Long id) {
         Paciente p = pacienteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Paciente", id));
         pacienteRepository.delete(p);

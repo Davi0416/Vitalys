@@ -19,13 +19,16 @@ public class UsuariosService {
         this.usuariosRepository = usuariosRepository;
     }
 
-    private void verificarDadosUnicos(UsuariosRequestDTO dto) {
-        if (usuariosRepository.existsByIdProfissional(dto.idProfissional())){
-            throw new ConflictException("id do profissional", String.valueOf(dto.idProfissional()));
-        }
-        if (usuariosRepository.existsByLogin(dto.login())){
-            throw new ConflictException("login", dto.login());
-        }
+    private void verificarDadosUnicos(UsuariosRequestDTO dto, Long idAtual) {
+        boolean loginExiste = idAtual != null
+                ? usuariosRepository.existsByLoginAndIdNot(dto.login(), idAtual)
+                : usuariosRepository.existsByLogin(dto.login());
+        if (loginExiste) throw new ConflictException("login", dto.login());
+
+        boolean profissionalExiste = idAtual != null
+                ? usuariosRepository.existsByIdProfissionalAndIdNot(dto.idProfissional(), idAtual)
+                : usuariosRepository.existsByIdProfissional(dto.idProfissional());
+        if (profissionalExiste) throw new ConflictException("id do profissional", String.valueOf(dto.idProfissional()));
     }
 
     public List<UsuariosResponseDTO> findAll() {
@@ -35,8 +38,8 @@ public class UsuariosService {
     }
 
     public UsuariosResponseDTO registrar(UsuariosRequestDTO dto) {
+        verificarDadosUnicos(dto, null);
         Usuarios u = new Usuarios();
-        verificarDadosUnicos(dto);
         u.atualizarDados(dto);
         return new UsuariosResponseDTO(usuariosRepository.save(u));
     }
@@ -44,12 +47,12 @@ public class UsuariosService {
     public UsuariosResponseDTO editar(Long id, UsuariosRequestDTO dto) {
         Usuarios u = usuariosRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário", id));
-        verificarDadosUnicos(dto);
+        verificarDadosUnicos(dto, id);
         u.atualizarDados(dto);
         return new UsuariosResponseDTO(usuariosRepository.save(u));
     }
 
-    public void deletar(Long id){
+    public void deletar(Long id) {
         Usuarios u = usuariosRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário", id));
         usuariosRepository.delete(u);
