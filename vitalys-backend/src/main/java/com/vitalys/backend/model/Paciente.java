@@ -2,9 +2,13 @@ package com.vitalys.backend.model;
 
 import com.vitalys.backend.dto.PacienteRequestDTO;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "paciente")
 public class Paciente {
@@ -39,20 +43,4 @@ public class Paciente {
         this.endereco = dto.endereco();
         this.telefone = dto.telefone();
     }
-
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getNome() { return nome; }
-
-    public String getCpf() { return cpf; }
-
-    public String getEmail() { return email; }
-
-    public Date getDataNascimento() { return dataNascimento; }
-
-    public String getTelefone() { return telefone; }
-
-    public String getEndereco() { return endereco; }
-
 }

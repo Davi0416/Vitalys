@@ -2,9 +2,13 @@ package com.vitalys.backend.model;
 
 import com.vitalys.backend.dto.CalendarioRequestDTO;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "calendario")
 public class Calendario {
@@ -29,33 +33,5 @@ public class Calendario {
         this.nome = dto.nome();
         this.tipo = dto.tipo();
         this.idAtendimento = dto.idAtendimento();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public Date getData() {
-        return data;
-    }
-
-    public void setData(Date data) {
-        this.data = data;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public Long getIdAtendimento() {
-        return idAtendimento;
     }
 }

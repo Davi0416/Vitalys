@@ -5,9 +5,13 @@ package com.vitalys.backend.model;
 import com.vitalys.backend.dto.AtendimentoRequestDTO;
 import com.vitalys.backend.repository.AtendimentoRepository;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "atendimento")
 public class Atendimento {
@@ -29,37 +33,5 @@ public class Atendimento {
         this.dataEHoraMarcadas = dto.dataEHoraMarcadas();
         this.idPaciente = dto.idPaciente();
         this.idProfissional = dto.idProfissional();
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Long getIdPaciente() {
-        return idPaciente;
-    }
-
-    public void setIdPaciente(Long idPaciente) {
-        this.idPaciente = idPaciente;
-    }
-
-    public Long getIdProfissional() {
-        return idProfissional;
-    }
-
-    public void setIdProfissional(Long idProfissional) {
-        this.idProfissional = idProfissional;
-    }
-
-    public LocalDateTime getDataEHoraMarcadas() {
-        return dataEHoraMarcadas;
-    }
-
-    public void setDataEHoraMarcadas(LocalDateTime dataEHoraMarcadas) {
-        this.dataEHoraMarcadas = dataEHoraMarcadas;
     }
 }

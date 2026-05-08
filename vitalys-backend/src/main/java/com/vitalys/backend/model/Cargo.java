@@ -2,7 +2,11 @@ package com.vitalys.backend.model;
 
 import com.vitalys.backend.dto.CargoRequestDTO;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "cargos")
 public class Cargo {
@@ -23,12 +27,4 @@ public class Cargo {
         this.nivelAcesso = dto.nivelAcesso();
         this.cargo = dto.cargo();
     }
-
-    public Long getId() { return id; }
-
-    public void setId(Long id) { this.id = id; }
-
-    public String getCargo() { return cargo; }
-
-    public String getNivelAcesso() { return nivelAcesso; }
 }

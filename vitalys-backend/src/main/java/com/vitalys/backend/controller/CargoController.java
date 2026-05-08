@@ -20,7 +20,6 @@ public class CargoController {
         this.cargoService = cargoService;
     }
 
-
     @PostMapping(path = "/cargos")
     public ResponseEntity<CargoResponseDTO> create(@RequestBody @Valid CargoRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(cargoService.registrar(dto));
