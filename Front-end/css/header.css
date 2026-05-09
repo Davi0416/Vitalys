@@ -1,29 +1,24 @@
-/* ─── HEADER ─── */
+/* ═══════════════════════════
+   HEADER — pill nav style
+   ═══════════════════════════ */
 header {
+  height: 64px;
   display: flex;
   align-items: center;
-  padding: 14px var(--side-padding, 5%);
-  background-color: var(--background-surface);
-  box-shadow: 0 1px 0 var(--border), var(--shadow-sm);
+  justify-content: space-between;
+  padding: 0 32px;
+  background: var(--background-surface);
+  border-bottom: 1px solid var(--border);
   position: relative;
   z-index: 100;
 }
 
-header span {
-  color: var(--text-secondary);
-  font-size: 13px;
-  font-weight: 500;
-  margin-left: auto;
-  margin-right: 14px;
-  letter-spacing: 0.01em;
-}
-
-/* ─── LOGO ─── */
+/* ─── Logo ─── */
 .logoClinica {
-  height: 52px;
+  height: 26px;
   width: auto;
   object-fit: contain;
-  transition: content 0.3s ease;
+  flex-shrink: 0;
 }
 
 [data-theme="dark"] .logoClinica {
@@ -36,46 +31,69 @@ header span {
   }
 }
 
-/* ─── NAV ─── */
-.menuNavegacao {
+/* ─── Label "Portal do Funcionário" ─── */
+header > span {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: .02em;
+  flex-shrink: 0;
+}
+
+/* ─── Direita: ações ─── */
+.header-right {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ─── Pill nav (centro absoluto) ─── */
+.menuNavegacao {
   position: absolute;
   left: 50%;
-  transform: translateX(-50%);
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  gap: 2px;
+  padding: 4px;
+  background: var(--background-elevated);
+  border: 1px solid var(--border);
+  border-radius: 10px;
 }
 
 .menuNavegacao a {
-  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--text-secondary);
   text-decoration: none;
-  padding: 7px 14px;
-  border-radius: var(--radius-md);
-  transition: background 0.15s, color 0.15s;
-  letter-spacing: 0.01em;
+  border-radius: 7px;
+  white-space: nowrap;
+  transition: background .12s, color .12s;
 }
 
 .menuNavegacao a:hover {
-  background-color: var(--background-elevated);
   color: var(--text-primary);
+  background: rgba(0,0,0,.04);
+}
+
+[data-theme="dark"] .menuNavegacao a:hover {
+  background: rgba(255,255,255,.05);
 }
 
 .menuNavegacao a.active {
-  background-color: var(--color-primary-soft);
-  color: var(--color-primary-dark);
+  background: var(--background-surface);
+  color: var(--text-primary);
   font-weight: 600;
+  box-shadow: var(--shadow-sm);
 }
 
-[data-theme="dark"] .menuNavegacao a.active {
-  background-color: rgba(26, 170, 124, 0.15);
-  color: var(--color-primary-light);
-}
-
-/* ─── BOTÃO TEMA ─── */
+/* ─── Botão tema ─── */
 .botaoTema {
-  background: transparent;
+  background: var(--background-elevated);
   border: 1px solid var(--border);
   color: var(--text-secondary);
   cursor: pointer;
@@ -87,48 +105,61 @@ header span {
   justify-content: center;
   padding: 0;
   overflow: hidden;
-  transition: all 0.2s ease;
   flex-shrink: 0;
+  transition: all 0.2s ease;
 }
 
 .botaoTema:hover {
   border-color: var(--color-primary);
   color: var(--color-primary);
-  background-color: var(--color-primary-soft);
+  background: var(--color-primary-soft);
 }
 
-[data-theme="dark"] .botaoTema:hover {
-  background-color: rgba(26, 170, 124, 0.12);
+#theme-icon { width: 16px; height: 16px; display: block; }
+
+/* ─── Avatar do usuário ─── */
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--brand-grad);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color .15s;
 }
 
-#theme-icon {
-  width: 17px;
-  height: 17px;
-  display: block;
+.user-avatar:hover {
+  border-color: var(--color-primary-light);
 }
 
-/* ─── HAMBÚRGUER ─── */
+/* ─── Hamburger ─── */
 .btn-hamburger {
   display: none;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 5px;
-  background: transparent;
+  background: var(--background-elevated);
   border: 1px solid var(--border);
   border-radius: 50%;
   width: 36px;
   height: 36px;
   padding: 0;
   cursor: pointer;
-  margin-left: auto;
   flex-shrink: 0;
-  transition: border-color 0.2s, background-color 0.2s;
+  transition: border-color .2s, background .2s;
 }
 
 .btn-hamburger:hover {
   border-color: var(--color-primary);
-  background-color: var(--color-primary-soft);
+  background: var(--color-primary-soft);
 }
 
 .btn-hamburger span {
@@ -137,36 +168,33 @@ header span {
   height: 1.5px;
   background: var(--text-secondary);
   border-radius: 2px;
-  transition: all 0.25s ease;
+  transition: all .25s ease;
 }
 
 .btn-hamburger.aberto span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
 .btn-hamburger.aberto span:nth-child(2) { opacity: 0; }
 .btn-hamburger.aberto span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
 
-/* ─── MOBILE ─── */
+/* ─── Mobile ─── */
 @media (max-width: 768px) {
   .btn-hamburger { display: flex; }
 
-  header {
-    flex-wrap: nowrap;
-  }
-
-  header span { display: none; }
-
-  .logoClinica { height: 36px; }
+  header > span { display: none; }
+  .logoClinica   { height: 24px; }
 
   .menuNavegacao {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
     background: var(--background-surface);
     border-bottom: 1px solid var(--border);
+    border-radius: 0;
+    border: none;
+    padding: 80px 16px 24px;
     flex-direction: column;
     align-items: stretch;
     gap: 4px;
-    padding: 80px 16px 24px;
     transform: translateY(-110%);
-    transition: transform 0.25s ease;
+    transition: transform .25s ease;
     z-index: 99;
   }
 
@@ -175,6 +203,6 @@ header span {
   .menuNavegacao a {
     font-size: 15px;
     padding: 13px 16px;
-    border-radius: var(--radius-md);
+    border-radius: 9px;
   }
 }
