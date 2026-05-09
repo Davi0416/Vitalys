@@ -153,6 +153,11 @@ function mascaraTelefone(input) {
   input.value = v;
 }
 
+function iniciais(nome) {
+  if (!nome) return '?';
+  return nome.trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+}
+
 function nomePaciente(id) {
   const p = pacientes.find(p => String(p.id) === String(id));
   return p ? p.nome : `Paciente #${id}`;
@@ -197,14 +202,13 @@ function renderizarPacientes(lista) {
     const item = document.createElement('div');
     item.className = 'item';
     item.innerHTML = `
+      <div class="item-avatar">${iniciais(p.nome)}</div>
       <div class="item-info">
         <span class="item-nome">${p.nome}</span>
         <span class="item-detalhe">
           CPF: ${p.cpf ?? '-'} &nbsp;|&nbsp;
-          Nasc: ${formatarData(p.dataNascimento)} &nbsp;|&nbsp;
-          ${p.email ?? '-'} &nbsp;|&nbsp;
           Tel: ${p.telefone ?? '-'} &nbsp;|&nbsp;
-          ${p.endereco ?? '-'}
+          Nasc: ${formatarData(p.dataNascimento)}
         </span>
       </div>
       <div class="item-acoes">
@@ -311,11 +315,11 @@ function renderizarProfissionais(lista) {
     const item = document.createElement('div');
     item.className = 'item';
     item.innerHTML = `
+      <div class="item-avatar">${iniciais(p.nome)}</div>
       <div class="item-info">
         <span class="item-nome">${p.nome}</span>
         <span class="item-detalhe">
           CPF: ${p.cpf ?? '-'} &nbsp;|&nbsp;
-          ${p.email ?? '-'} &nbsp;|&nbsp;
           Tel: ${p.telefone ?? '-'} &nbsp;|&nbsp;
           Nasc: ${formatarData(p.dataNascimento)}
         </span>
@@ -441,13 +445,23 @@ function renderizarAgendamentos(lista) {
   msg.style.display = 'none';
 
   lista.forEach(a => {
+    const nomePac = a.nomePaciente || nomePaciente(a.idPaciente);
+    const status = a.status ?? 'pendente';
+    const badgeClass = status === 'confirmado' ? 'badge-ativo'
+                     : status === 'cancelado'  ? 'badge-desligado'
+                     : 'badge-pendente';
+    const badgeLabel = status.charAt(0).toUpperCase() + status.slice(1);
     const item = document.createElement('div');
     item.className = 'item';
     item.innerHTML = `
+      <div class="item-avatar">${iniciais(nomePac)}</div>
       <div class="item-info">
-        <span class="item-nome">${a.nomePaciente || nomePaciente(a.idPaciente)}</span>
+        <span class="item-nome">
+          ${nomePac}
+          <span class="badge ${badgeClass}">${badgeLabel}</span>
+        </span>
         <span class="item-detalhe">
-          Profissional: ${a.nomeProfissional || nomeProfissional(a.idProfissional)} &nbsp;|&nbsp;
+          ${a.nomeProfissional || nomeProfissional(a.idProfissional)} &nbsp;|&nbsp;
           ${formatarDataHora(a.dataEHoraMarcadas)}
         </span>
       </div>
