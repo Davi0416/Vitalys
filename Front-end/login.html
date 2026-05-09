@@ -23,21 +23,20 @@
 
     <main>
       <section class="login">
-        <h1>Login</h1>
+        <h1>Bem-vindo</h1>
+        <span class="login-subtitle">Acesse o portal do funcionário Vitalys</span>
 
         <form action="#" method="post">
-          <label for="login">Login:</label>
-          <input type="text" name="userLogin" id="login" required autocomplete="username" />
+          <label for="login">Login</label>
+          <input type="text" name="userLogin" id="login" placeholder="Seu login" required autocomplete="username" />
 
-          <label for="password">Senha:</label>
-          <input type="password" name="userPassword" id="password" required autocomplete="current-password" />
+          <label for="password">Senha</label>
+          <input type="password" name="userPassword" id="password" placeholder="Sua senha" required autocomplete="current-password" />
 
-          <p id="msgErroLogin" style="color: var(--cor-erro, #e05555); font-size: 0.875rem; min-height: 1.2em;"></p>
+          <p id="msgErroLogin"></p>
 
           <div class="login-actions">
-            <button type="submit" class="botaoEntrar" id="enviarLogin">
-              Entrar
-            </button>
+            <button type="submit" class="botaoEntrar" id="enviarLogin">Entrar</button>
             <a href="#" class="link-forgot">Esqueci minha senha</a>
           </div>
         </form>

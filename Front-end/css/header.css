@@ -1,25 +1,26 @@
-/* --- HEADER --- */
+/* ─── HEADER ─── */
 header {
   display: flex;
   align-items: center;
-  padding: 15px var(--side-padding, 5%);
-  border-bottom: 1px solid var(--border);
+  padding: 14px var(--side-padding, 5%);
   background-color: var(--background-surface);
+  box-shadow: 0 1px 0 var(--border), var(--shadow-sm);
   position: relative;
   z-index: 100;
 }
 
 header span {
-  color: var(--text-primary);
-  font-size: 14px;
-  font-weight: bold;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
   margin-left: auto;
-  margin-right: 15px;
+  margin-right: 14px;
+  letter-spacing: 0.01em;
 }
 
-/* --- LOGO --- */
+/* ─── LOGO ─── */
 .logoClinica {
-  height: 60px;
+  height: 52px;
   width: auto;
   object-fit: contain;
   transition: content 0.3s ease;
@@ -35,23 +36,25 @@ header span {
   }
 }
 
-/* --- MENU DE NAVEGAÇÃO --- */
+/* ─── NAV ─── */
 .menuNavegacao {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
 }
 
 .menuNavegacao a {
-  font-size: 16px;
+  font-size: 14px;
+  font-weight: 500;
   color: var(--text-secondary);
   text-decoration: none;
-  padding: 6px 14px;
-  border-radius: 6px;
+  padding: 7px 14px;
+  border-radius: var(--radius-md);
   transition: background 0.15s, color 0.15s;
+  letter-spacing: 0.01em;
 }
 
 .menuNavegacao a:hover {
@@ -60,41 +63,51 @@ header span {
 }
 
 .menuNavegacao a.active {
-  background-color: var(--background-elevated);
-  color: var(--color-primary);
-  font-weight: 500;
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary-dark);
+  font-weight: 600;
 }
 
-/* --- BOTÃO DE TEMA --- */
+[data-theme="dark"] .menuNavegacao a.active {
+  background-color: rgba(26, 170, 124, 0.15);
+  color: var(--color-primary-light);
+}
+
+/* ─── BOTÃO TEMA ─── */
 .botaoTema {
   background: transparent;
   border: 1px solid var(--border);
-  color: var(--text-primary);
+  color: var(--text-secondary);
   cursor: pointer;
-  width: 35px;
-  height: 35px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
-  margin: 0;
   overflow: hidden;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .botaoTema:hover {
   border-color: var(--color-primary);
-  background-color: var(--background-elevated);
+  color: var(--color-primary);
+  background-color: var(--color-primary-soft);
+}
+
+[data-theme="dark"] .botaoTema:hover {
+  background-color: rgba(26, 170, 124, 0.12);
 }
 
 #theme-icon {
-  width: 18px;
-  height: 18px;
+  width: 17px;
+  height: 17px;
   display: block;
 }
 
-/* --- HAMBÚRGUER --- */
+/* ─── HAMBÚRGUER ─── */
 .btn-hamburger {
   display: none;
   flex-direction: column;
@@ -104,8 +117,8 @@ header span {
   background: transparent;
   border: 1px solid var(--border);
   border-radius: 50%;
-  width: 35px;
-  height: 35px;
+  width: 36px;
+  height: 36px;
   padding: 0;
   cursor: pointer;
   margin-left: auto;
@@ -115,52 +128,37 @@ header span {
 
 .btn-hamburger:hover {
   border-color: var(--color-primary);
-  background-color: var(--background-elevated);
+  background-color: var(--color-primary-soft);
 }
 
 .btn-hamburger span {
   display: block;
-  width: 16px;
-  height: 2px;
-  background: var(--text-primary);
+  width: 15px;
+  height: 1.5px;
+  background: var(--text-secondary);
   border-radius: 2px;
   transition: all 0.25s ease;
 }
 
-/* Animação X ao abrir */
-.btn-hamburger.aberto span:nth-child(1) {
-  transform: translateY(7px) rotate(45deg);
-}
-.btn-hamburger.aberto span:nth-child(2) {
-  opacity: 0;
-}
-.btn-hamburger.aberto span:nth-child(3) {
-  transform: translateY(-7px) rotate(-45deg);
-}
+.btn-hamburger.aberto span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.btn-hamburger.aberto span:nth-child(2) { opacity: 0; }
+.btn-hamburger.aberto span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
 
+/* ─── MOBILE ─── */
 @media (max-width: 768px) {
-  .btn-hamburger {
-    display: flex;
-  }
+  .btn-hamburger { display: flex; }
 
   header {
     flex-wrap: nowrap;
   }
 
-  header span {
-    display: none;
-  }
+  header span { display: none; }
 
-  .logoClinica {
-    height: 38px;
-  }
+  .logoClinica { height: 36px; }
 
   .menuNavegacao {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    top: 0; left: 0; right: 0; bottom: 0;
     background: var(--background-surface);
     border-bottom: 1px solid var(--border);
     flex-direction: column;
@@ -172,13 +170,11 @@ header span {
     z-index: 99;
   }
 
-  .menuNavegacao.aberto {
-    transform: translateY(0);
-  }
+  .menuNavegacao.aberto { transform: translateY(0); }
 
   .menuNavegacao a {
     font-size: 15px;
-    padding: 12px 16px;
-    border-radius: 8px;
+    padding: 13px 16px;
+    border-radius: var(--radius-md);
   }
 }
