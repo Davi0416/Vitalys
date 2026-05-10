@@ -43,8 +43,8 @@ export default function Login() {
         body: JSON.stringify({ login: form.login, senha: form.password }),
       });
       if (res.ok) {
-        const data = await res.json();
-        login(data.token || data);
+        const token = await res.text();
+        login(token);
         navigate('/', { replace: true });
       } else {
         setErro('Usuário ou senha incorretos.');
