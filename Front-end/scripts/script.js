@@ -595,21 +595,148 @@ async function cancelarAgendamento(id) {
 
 //  INÍCIO
 
-function atualizarResumoInicio() {
-  const hoje = new Date().toDateString();
+function irParaAgendamentos() {
+  const link = document.querySelector('.menuNavegacao a[onclick*="agendamentos"]');
+  if (link) mostrarTela('agendamentos', link);
+}
+
+async function atualizarResumoInicio() {
+  // Carrega dados se ainda não foram carregados
+  const promises = [];
+  if (agendamentos.length === 0)  promises.push(carregarAgendamentos());
+  if (profissionais.length === 0) promises.push(carregarProfissionais());
+  if (pacientes.length === 0)     promises.push(carregarPacientes());
+  if (promises.length) await Promise.all(promises);
+
+  // ── Data formatada ──
+  const agora = new Date();
+  const DIAS_PT  = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
+  const MESES_PT = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  const diaStr  = DIAS_PT[agora.getDay()];
+  const diaNum  = String(agora.getDate()).padStart(2, '0');
+  const mesStr  = MESES_PT[agora.getMonth()];
+  const dataFormatada = `${diaStr}, ${diaNum} de ${mesStr} de ${agora.getFullYear()}`.toUpperCase();
+  const elData = document.getElementById('inicioData');
+  if (elData) elData.textContent = dataFormatada;
+
+  // ── Saudação com nome do usuário (decodifica JWT) ──
+  const hora = agora.getHours();
+  const saudacao = hora < 12 ? 'Bom dia' : hora < 18 ? 'Boa tarde' : 'Boa noite';
+  let nomeUsuario = '';
+  try {
+    const token = getToken();
+    if (token) {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const login = payload.sub || payload.name || payload.login || '';
+      const primeiro = login.split(/[._@\s]/)[0];
+      nomeUsuario = primeiro.charAt(0).toUpperCase() + primeiro.slice(1).toLowerCase();
+    }
+  } catch {}
+  const elSaud = document.getElementById('inicioSaudacao');
+  if (elSaud) {
+    elSaud.innerHTML = nomeUsuario
+      ? `${saudacao}, <span style="color:var(--color-primary)">${nomeUsuario}</span> 👋`
+      : `${saudacao}! 👋`;
+  }
+
+  // ── Agendamentos de hoje ──
+  const hojeStr = agora.toDateString();
   const agHoje = agendamentos.filter(a => {
     if (!a.dataEHoraMarcadas) return false;
-    return new Date(a.dataEHoraMarcadas).toDateString() === hoje;
-  }).length;
+    return new Date(a.dataEHoraMarcadas).toDateString() === hojeStr;
+  });
+  const confirmados = agHoje.filter(a => a.status === 'confirmado').length;
+  const pendentes   = agHoje.filter(a => !a.status || a.status === 'pendente').length;
+  const cancelados  = agHoje.filter(a => a.status === 'cancelado').length;
 
-  const elAgHoje = document.getElementById('totalAgendamentosHoje');
-  const elProf   = document.getElementById('totalProfissionais');
-  const elPac    = document.getElementById('totalPacientes');
+  const elAgHoje   = document.getElementById('totalAgendamentosHoje');
+  const elSubAgend = document.getElementById('subAgend');
+  if (elAgHoje) elAgHoje.textContent = agHoje.length;
+  if (elSubAgend) {
+    elSubAgend.textContent = agHoje.length > 0
+      ? `${confirmados} confirmados · ${pendentes} pendentes · ${cancelados} cancelados`
+      : 'Nenhum agendamento hoje';
+  }
 
-  if (elAgHoje) elAgHoje.textContent = agHoje;
-  if (elProf)   elProf.textContent   = profissionais.length;
-  if (elPac)    elPac.textContent    = pacientes.length;
+  // ── Profissionais e pacientes ──
+  const elProf    = document.getElementById('totalProfissionais');
+  const elSubProf = document.getElementById('subProf');
+  const elPac     = document.getElementById('totalPacientes');
+  const elSubPac  = document.getElementById('subPac');
+  if (elProf)    elProf.textContent    = profissionais.length;
+  if (elSubProf) elSubProf.textContent = profissionais.length === 1 ? '1 cadastrado no sistema' : `${profissionais.length} cadastrados no sistema`;
+  if (elPac)     elPac.textContent     = pacientes.length.toLocaleString('pt-BR');
+  if (elSubPac)  elSubPac.textContent  = `${pacientes.length} registros ativos`;
+
+  // ── Próximos atendimentos (hoje, ordem crescente de hora) ──
+  const agOrdenados = agHoje.slice().sort((a, b) =>
+    new Date(a.dataEHoraMarcadas) - new Date(b.dataEHoraMarcadas)
+  );
+  const listaEl = document.getElementById('listaProximosAtend');
+  if (listaEl) {
+    if (agOrdenados.length === 0) {
+      listaEl.innerHTML = '<p class="lista-vazia" style="padding:24px 0;">Nenhum atendimento agendado para hoje.</p>';
+    } else {
+      listaEl.innerHTML = agOrdenados.slice(0, 6).map(a => {
+        const horaFmt = new Date(a.dataEHoraMarcadas)
+          .toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        const status     = a.status ?? 'pendente';
+        const barraClass = status === 'confirmado' ? '' : ` ${status}`;
+        const badgeClass = status === 'confirmado' ? 'badge-ativo'
+                         : status === 'cancelado'  ? 'badge-desligado'
+                         : 'badge-pendente';
+        const badgeLabel = status.charAt(0).toUpperCase() + status.slice(1);
+        const nomePac  = a.nomePaciente  || nomePaciente(a.idPaciente);
+        const nomeProf = a.nomeProfissional || nomeProfissional(a.idProfissional);
+        return `
+          <div class="proximo-atend">
+            <span class="proximo-atend-hora">${horaFmt}</span>
+            <div class="proximo-atend-barra${barraClass}"></div>
+            <div class="proximo-atend-info">
+              <div class="proximo-atend-nome">${nomePac}</div>
+              <div class="proximo-atend-det">${nomeProf}</div>
+            </div>
+            <span class="badge ${badgeClass}">${badgeLabel}</span>
+          </div>`;
+      }).join('');
+    }
+  }
+  const elAtendSub = document.getElementById('atendSub');
+  if (elAtendSub) elAtendSub.textContent = 'Atualizado agora';
+
+  // ── Ocupação por profissional ──
+  const ocupEl = document.getElementById('ocupacaoLista');
+  if (ocupEl) {
+    const contagem = {};
+    agHoje.forEach(a => {
+      const nome = a.nomeProfissional || nomeProfissional(a.idProfissional);
+      contagem[nome] = (contagem[nome] || 0) + 1;
+    });
+    const entries = Object.entries(contagem).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    const maxVal  = entries.length ? entries[0][1] : 1;
+
+    if (entries.length === 0) {
+      ocupEl.innerHTML = '<p style="font-size:13px;color:var(--text-muted);padding:12px 0;">Sem agendamentos hoje.</p>';
+    } else {
+      ocupEl.innerHTML = entries.map(([nome, count]) => {
+        const pct = Math.round((count / maxVal) * 100);
+        return `
+          <div class="ocupacao-item">
+            <div class="ocupacao-item-header">
+              <span class="ocupacao-item-nome">${nome}</span>
+              <span class="ocupacao-item-pct">${count} agend.</span>
+            </div>
+            <div class="ocupacao-barra-track">
+              <div class="ocupacao-barra-fill" style="width:${pct}%"></div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+  }
 }
+
+// Popula o Início na carga inicial da página
+atualizarResumoInicio();
 
 
 //  CALENDÁRIO
