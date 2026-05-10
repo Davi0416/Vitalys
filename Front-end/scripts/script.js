@@ -635,8 +635,8 @@ async function atualizarResumoInicio() {
   const elSaud = document.getElementById('inicioSaudacao');
   if (elSaud) {
     elSaud.innerHTML = nomeUsuario
-      ? `${saudacao}, <span style="color:var(--color-primary)">${nomeUsuario}</span> 👋`
-      : `${saudacao}! 👋`;
+      ? `${saudacao}, <span style="color:var(--color-primary)">${nomeUsuario}</span>`
+      : `${saudacao}!`;
   }
 
   // ── Agendamentos de hoje ──
