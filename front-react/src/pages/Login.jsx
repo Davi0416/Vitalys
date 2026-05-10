@@ -22,6 +22,11 @@ export default function Login() {
   });
 
   useEffect(() => {
+    document.body.classList.add('login-page');
+    return () => document.body.classList.remove('login-page');
+  }, []);
+
+  useEffect(() => {
     if (token) navigate('/', { replace: true });
   }, [token, navigate]);
 
