@@ -1,15 +1,17 @@
-export const API = 'https://vitalys-gc27.onrender.com/vitalys';
+import { TOKEN_KEY, API } from '../constants';
+
+export { API };
 
 export function getToken(): string | null {
-  return localStorage.getItem('vitalys-token');
+  return localStorage.getItem(TOKEN_KEY);
 }
 
 export function setToken(token: string): void {
-  localStorage.setItem('vitalys-token', token);
+  localStorage.setItem(TOKEN_KEY, token);
 }
 
 export function removeToken(): void {
-  localStorage.removeItem('vitalys-token');
+  localStorage.removeItem(TOKEN_KEY);
 }
 
 export async function apiFetch(

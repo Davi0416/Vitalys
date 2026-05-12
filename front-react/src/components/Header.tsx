@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { getNomeUsuario } from '../api';
+import { THEME_KEY } from '../constants';
 
 interface Theme {
   name: string;
@@ -33,7 +34,7 @@ export default function Header() {
   const navigate = useNavigate();
   const [menuAberto, setMenuAberto] = useState(false);
   const [themeIdx, setThemeIdx] = useState(() => {
-    const saved = localStorage.getItem('vitalys-theme-preference');
+    const saved = localStorage.getItem(THEME_KEY);
     const i = THEMES.findIndex(t => t.name === saved);
     return i !== -1 ? i : 0;
   });
@@ -42,7 +43,7 @@ export default function Header() {
     const theme = THEMES[themeIdx];
     if (theme.name === 'system') document.documentElement.removeAttribute('data-theme');
     else document.documentElement.setAttribute('data-theme', theme.name);
-    localStorage.setItem('vitalys-theme-preference', theme.name);
+    localStorage.setItem(THEME_KEY, theme.name);
   }, [themeIdx]);
 
   const nomeUsuario = getNomeUsuario();
