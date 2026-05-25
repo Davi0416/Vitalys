@@ -2,14 +2,14 @@ package com.vitalys.backend.model;
 
 import com.vitalys.backend.dto.ProfissionalRequestDTO;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.validator.constraints.br.CPF;
-
 import java.util.Date;
 
-@Setter
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "profissionais")
 public class Profissional {
@@ -34,11 +34,11 @@ public class Profissional {
     @Column(name = "telefone")
     private String telefone;
 
-    public void atualizarDados(ProfissionalRequestDTO dto) {
+    public void atualizar(ProfissionalRequestDTO dto) {
         this.nome = dto.nome();
         this.email = dto.email();
-        this.dataNascimento =  dto.dataNascimento();
-        this.cpf =  dto.cpf();
+        this.cpf = dto.cpf();
         this.telefone = dto.telefone();
+        this.dataNascimento = dto.dataNascimento();
     }
 }

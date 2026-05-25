@@ -7,6 +7,7 @@ import com.vitalys.backend.exception.ResourceNotFoundException;
 import com.vitalys.backend.model.Profissional;
 import com.vitalys.backend.repository.ProfissionalRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -36,30 +37,39 @@ public class ProfissionalService {
         if (telefoneExiste) throw new ConflictException("telefone", dto.telefone());
     }
 
+    @Transactional(readOnly = true)
     public List<ProfissionalResponseDTO> findAll() {
         return profissionalRepository.findAll().stream()
                 .map(ProfissionalResponseDTO::new)
                 .toList();
     }
 
+    @Transactional
     public ProfissionalResponseDTO registrar(ProfissionalRequestDTO dto) {
         verificarDadosUnicos(dto, null);
-        Profissional p = new Profissional();
-        p.atualizarDados(dto);
+        Profissional p = Profissional.builder()
+                .nome(dto.nome())
+                .email(dto.email())
+                .cpf(dto.cpf())
+                .telefone(dto.telefone())
+                .dataNascimento(dto.dataNascimento())
+                .build();
         return new ProfissionalResponseDTO(profissionalRepository.save(p));
     }
 
+    @Transactional
     public ProfissionalResponseDTO editar(Long id, ProfissionalRequestDTO dto) {
         Profissional p = profissionalRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Profissional", id));
         verificarDadosUnicos(dto, id);
-        p.atualizarDados(dto);
+        p.atualizar(dto);
         return new ProfissionalResponseDTO(profissionalRepository.save(p));
     }
 
+    @Transactional
     public void deletar(Long id) {
-        Profissional profissional = profissionalRepository.findById(id)
+        Profissional p = profissionalRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Profissional", id));
-        profissionalRepository.delete(profissional);
+        profissionalRepository.delete(p);
     }
 }

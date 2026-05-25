@@ -2,11 +2,12 @@ package com.vitalys.backend.model;
 
 import com.vitalys.backend.dto.CargoRequestDTO;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
-@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "cargos")
 public class Cargo {
@@ -21,10 +22,8 @@ public class Cargo {
     @Column(name = "nivel_acesso")
     private String nivelAcesso;
 
-    public Cargo() {}
-
-    public void atualizarDados(CargoRequestDTO dto) {
-        this.nivelAcesso = dto.nivelAcesso();
+    public void atualizar(CargoRequestDTO dto) {
         this.cargo = dto.cargo();
+        this.nivelAcesso = dto.nivelAcesso();
     }
 }

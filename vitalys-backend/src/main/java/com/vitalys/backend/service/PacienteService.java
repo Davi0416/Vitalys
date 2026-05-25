@@ -7,6 +7,7 @@ import com.vitalys.backend.exception.ResourceNotFoundException;
 import com.vitalys.backend.model.Paciente;
 import com.vitalys.backend.repository.PacienteRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -36,27 +37,37 @@ public class PacienteService {
         if (telefoneExiste) throw new ConflictException("telefone", dto.telefone());
     }
 
+    @Transactional(readOnly = true)
     public List<PacienteResponseDTO> findAll() {
         return pacienteRepository.findAll().stream()
                 .map(PacienteResponseDTO::new)
                 .toList();
     }
 
+    @Transactional
     public PacienteResponseDTO registrar(PacienteRequestDTO dto) {
         verificarDadosUnicos(dto, null);
-        Paciente p = new Paciente();
-        p.atualizarDados(dto);
+        Paciente p = Paciente.builder()
+                .nome(dto.nome())
+                .cpf(dto.cpf())
+                .email(dto.email())
+                .dataNascimento(dto.dataNascimento())
+                .endereco(dto.endereco())
+                .telefone(dto.telefone())
+                .build();
         return new PacienteResponseDTO(pacienteRepository.save(p));
     }
 
+    @Transactional
     public PacienteResponseDTO editar(Long id, PacienteRequestDTO dto) {
         Paciente p = pacienteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Paciente", id));
         verificarDadosUnicos(dto, id);
-        p.atualizarDados(dto);
+        p.atualizar(dto);
         return new PacienteResponseDTO(pacienteRepository.save(p));
     }
 
+    @Transactional
     public void deletar(Long id) {
         Paciente p = pacienteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Paciente", id));

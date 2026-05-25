@@ -2,13 +2,13 @@ package com.vitalys.backend.model;
 
 import com.vitalys.backend.dto.PacienteRequestDTO;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
+import lombok.*;
 import java.util.Date;
 
-@Setter
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "paciente")
 public class Paciente {
@@ -35,7 +35,7 @@ public class Paciente {
     @Column(name = "telefone")
     private String telefone;
 
-    public void atualizarDados(PacienteRequestDTO dto) {
+    public void atualizar(PacienteRequestDTO dto) {
         this.nome = dto.nome();
         this.cpf = dto.cpf();
         this.email = dto.email();

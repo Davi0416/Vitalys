@@ -6,6 +6,7 @@ import com.vitalys.backend.exception.ResourceNotFoundException;
 import com.vitalys.backend.model.Calendario;
 import com.vitalys.backend.repository.CalendarioRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,28 +19,36 @@ public class CalendarioService {
         this.calendarioRepository = calendarioRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<CalendarioResponseDTO> findAll() {
         return calendarioRepository.findAll().stream()
                 .map(CalendarioResponseDTO::new)
                 .toList();
     }
 
+    @Transactional
     public CalendarioResponseDTO registrar(CalendarioRequestDTO dto) {
-        Calendario c = new Calendario();
-        c.atualizarDados(dto);
+        Calendario c = Calendario.builder()
+                .nome(dto.nome())
+                .data(dto.data())
+                .tipo(dto.tipo())
+                .idAtendimento(dto.idAtendimento())
+                .build();
         return new CalendarioResponseDTO(calendarioRepository.save(c));
     }
 
+    @Transactional
     public CalendarioResponseDTO editar(Long id, CalendarioRequestDTO dto) {
         Calendario c = calendarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Data", id));
-        c.atualizarDados(dto);
+        c.atualizar(dto);
         return new CalendarioResponseDTO(calendarioRepository.save(c));
     }
 
-    public void deletar(Long id){
-        Calendario existente = calendarioRepository.findById(id)
+    @Transactional
+    public void deletar(Long id) {
+        Calendario c = calendarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Data", id));
-        calendarioRepository.delete(existente);
+        calendarioRepository.delete(c);
     }
 }

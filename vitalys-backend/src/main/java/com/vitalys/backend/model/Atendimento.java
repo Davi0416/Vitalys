@@ -1,17 +1,14 @@
 package com.vitalys.backend.model;
 
-
-
 import com.vitalys.backend.dto.AtendimentoRequestDTO;
-import com.vitalys.backend.repository.AtendimentoRepository;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
+import lombok.*;
 import java.time.LocalDateTime;
 
-@Setter
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "atendimento")
 public class Atendimento {
@@ -29,9 +26,9 @@ public class Atendimento {
     @Column(name = "data_e_hora_marcadas")
     private LocalDateTime dataEHoraMarcadas;
 
-    public void atualizarDados(AtendimentoRequestDTO dto) {
-        this.dataEHoraMarcadas = dto.dataEHoraMarcadas();
+    public void atualizar(AtendimentoRequestDTO dto) {
         this.idPaciente = dto.idPaciente();
         this.idProfissional = dto.idProfissional();
+        this.dataEHoraMarcadas = dto.dataEHoraMarcadas();
     }
 }

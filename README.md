@@ -1,16 +1,14 @@
-Projeto desenvolvido com foco em aprendizado e prática para atuação como desenvolvedor backend.
+# Vitalys — Sistema de Gestão Clínica
 
-# Vitalys — API de Gestão Clínica
+> Projeto desenvolvido com foco em aprendizado e prática para atuação como desenvolvedor.
 
-API REST para gerenciamento de clínicas multidisciplinares, desenvolvida com **Spring Boot 3.5.13** e **Java 21**.
-
-Permite cadastrar pacientes, profissionais e usuários, realizar agendamentos, gerenciar cargos e visualizar eventos no calendário.
+Sistema completo para gerenciamento de clínicas multidisciplinares. Permite cadastrar pacientes, profissionais e usuários, realizar agendamentos e visualizar eventos no calendário.
 
 ## Demo
 
 | Serviço | URL |
 |---|---|
-| Frontend | https://vitalys0416.netlify.app/login.html |
+| Frontend | https://vitalys0416.netlify.app |
 | Backend (API) | https://vitalys-gc27.onrender.com |
 
 **Acesso demo:** login `admin` / senha `admin123`
@@ -25,6 +23,7 @@ Permite cadastrar pacientes, profissionais e usuários, realizar agendamentos, g
 - [Pré-requisitos](#pré-requisitos)
 - [Configuração do Ambiente](#configuração-do-ambiente)
 - [Executando o Projeto](#executando-o-projeto)
+- [Padrões de Projeto](#padrões-de-projeto)
 - [Endpoints](#endpoints)
 - [Estrutura do Projeto](#estrutura-do-projeto)
 - [Banco de Dados](#banco-de-dados)
@@ -34,24 +33,35 @@ Permite cadastrar pacientes, profissionais e usuários, realizar agendamentos, g
 
 ## Tecnologias
 
+### Backend
+
 | Tecnologia | Versão | Descrição |
 |---|---|---|
 | Java | 21 (LTS) | Linguagem principal |
-| Spring Boot | 3.5.13 | Framework base da aplicação |
+| Spring Boot | 3.5 | Framework base da aplicação |
 | Spring Data JPA | (gerenciada) | Camada de persistência com Hibernate |
 | Spring Security | (gerenciada) | Autenticação e autorização |
 | Auth0 Java JWT | 4.4.0 | Geração e validação de tokens JWT |
+| Lombok | (gerenciada) | Redução de boilerplate (@Builder, @Getter...) |
 | MySQL | 9.6 | Banco de dados relacional |
 | Maven | (wrapper incluso) | Gerenciamento de dependências e build |
 | Docker | — | Container do banco de dados |
+
+### Frontend
+
+| Tecnologia | Versão | Descrição |
+|---|---|---|
+| React | 18 | Biblioteca de UI |
+| TypeScript | 5.6 | Tipagem estática |
+| Vite | 5.4 | Bundler e servidor de desenvolvimento |
+| React Router | 6 | Roteamento SPA |
 
 ---
 
 ## Pré-requisitos
 
-Antes de executar o projeto, certifique-se de ter instalado:
-
 - **Java 21+** — [Download](https://adoptium.net/)
+- **Node.js 20+** — [Download](https://nodejs.org/)
 - **Docker** — [Download](https://www.docker.com/)
 - **Git**
 
@@ -63,20 +73,21 @@ Antes de executar o projeto, certifique-se de ter instalado:
 
 ```bash
 git clone https://github.com/Davi0416/Vitalys.git
-cd Vitalys/vitalys-backend
+cd Vitalys
 ```
 
-### 2. Suba o banco de dados com Docker
+### 2. Backend — suba o banco de dados com Docker
 
 ```bash
+cd vitalys-backend
 docker compose up -d
 ```
 
 Isso sobe um container MySQL na porta `1416` com o banco `base_de_dados_vitalys` já configurado.
 
-### 3. Configure o arquivo de propriedades
+### 3. Backend — configure o arquivo de propriedades
 
-Crie o arquivo `src/main/resources/application.properties` com o seguinte conteúdo:
+Crie o arquivo `vitalys-backend/src/main/resources/application.properties`:
 
 ```properties
 spring.application.name=vitalys-backend
@@ -89,43 +100,87 @@ spring.jpa.show-sql=true
 api.security.token.secret=seu-secret-jwt-aqui
 ```
 
-> **Atenção:** o arquivo `application.properties` está no `.gitignore` para proteger as credenciais. Crie-o manualmente após clonar o repositório.
+> **Atenção:** `application.properties` está no `.gitignore`. Crie-o manualmente após clonar.
 
-### 4. Execute o schema do banco
+### 4. Backend — execute o schema
 
-Com o container rodando, execute o arquivo `database/schema.sql` no banco para criar as tabelas e inserir os dados iniciais de cargos.
+Com o container rodando, execute `vitalys-backend/database/schema.sql` para criar as tabelas.
+
+### 5. Frontend — instale as dependências
+
+```bash
+cd front-react
+cp .env.example .env   # ajuste VITE_API_URL se necessário
+npm install
+```
 
 ---
 
 ## Executando o Projeto
 
-### Pelo IntelliJ IDEA
+### Backend
 
-Abra o projeto e execute a classe `VitalysBackendApplication`.
+**IntelliJ IDEA:** abra o projeto e execute `VitalysBackendApplication`.
 
-### Pelo Maven Wrapper
+**Maven Wrapper:**
 
-**Windows:**
-```cmd
-mvnw.cmd spring-boot:run
-```
-
-**Linux / macOS:**
 ```bash
-./mvnw spring-boot:run
+# Windows
+cd vitalys-backend && mvnw.cmd spring-boot:run
+
+# Linux / macOS
+cd vitalys-backend && ./mvnw spring-boot:run
 ```
 
-Após a inicialização, a aplicação estará disponível em:
+API disponível em `http://localhost:8080`.
 
+### Frontend
+
+```bash
+cd front-react
+npm run dev        # desenvolvimento em http://localhost:5173
+npm run build      # gera dist/ para produção
 ```
-http://localhost:8080
+
+---
+
+## Padrões de Projeto
+
+O backend aplica os seguintes design patterns:
+
+### Facade — Services
+Controllers são finos: apenas recebem HTTP e delegam para os services. Toda lógica de negócio vive nos `*Service.java`.
+
+### Builder — Criação de entidades
+Todas as entidades usam `@Builder` do Lombok. Os services criam objetos com o padrão fluente:
+
+```java
+Paciente p = Paciente.builder()
+    .nome(dto.nome())
+    .cpf(dto.cpf())
+    .email(dto.email())
+    .build();
 ```
+
+### Proxy — Transações
+Métodos de escrita são anotados com `@Transactional` (rollback automático em falha) e leituras com `@Transactional(readOnly = true)` (otimização de conexão).
+
+### Strategy — Tipos de atendimento
+`AgendamentoStrategy` é uma interface com implementações `ConsultaStrategy` e `RetornoStrategy`, ambas anotadas com `@Component`. O `AtendimentoService` injeta `Map<String, AgendamentoStrategy>` e delega sem `if/else`:
+
+```java
+AgendamentoStrategy strategy = strategies.get(dto.tipo()); // "consulta" ou "retorno"
+strategy.validar(dto);
+```
+
+### Observer — Evento de atendimento criado
+Após persistir um atendimento, o service publica `AtendimentoCriadoEvent` via `ApplicationEventPublisher`. O `AtendimentoEventListener` escuta com `@EventListener` e loga o evento, desacoplando side-effects do fluxo principal.
 
 ---
 
 ## Autenticação
 
-A API utiliza **JWT (JSON Web Token)** para autenticação. Todos os endpoints, exceto `/vitalys/auth/login`, exigem um token válido no header:
+A API usa **JWT** para autenticação. Todos os endpoints, exceto `/vitalys/auth/login`, exigem o header:
 
 ```
 Authorization: Bearer <token>
@@ -160,28 +215,10 @@ Todos os endpoints são prefixados com `/vitalys`.
 | `PUT` | `/vitalys/pacientes/{id}` | Atualiza dados de um paciente |
 | `DELETE` | `/vitalys/pacientes/{id}` | Remove um paciente |
 
-#### Exemplo — Cadastrar paciente
+**Exemplo — POST `/vitalys/pacientes`**
 
-**Request:**
-```http
-POST /vitalys/pacientes
-Content-Type: application/json
-Authorization: Bearer <token>
-
-{
-  "nome": "João Silva",
-  "cpf": "123.456.789-00",
-  "email": "joao@email.com",
-  "telefone": "21999999999",
-  "dataNascimento": "1990-05-10",
-  "endereco": "Rua A, 123"
-}
-```
-
-**Response `201 Created`:**
 ```json
 {
-  "id": 1,
   "nome": "João Silva",
   "cpf": "123.456.789-00",
   "email": "joao@email.com",
@@ -202,37 +239,6 @@ Authorization: Bearer <token>
 | `PUT` | `/vitalys/profissionais/{id}` | Atualiza dados de um profissional |
 | `DELETE` | `/vitalys/profissionais/{id}` | Remove um profissional |
 
-#### Exemplo — Cadastrar profissional
-
-**Request:**
-```http
-POST /vitalys/profissionais
-Content-Type: application/json
-Authorization: Bearer <token>
-
-{
-  "nome": "Dr. Carlos Lima",
-  "cpf": "987.654.321-00",
-  "email": "carlos@vitalys.com",
-  "telefone": "21988888888",
-  "dataNascimento": "1985-03-22",
-  "idCargo": 2
-}
-```
-
-**Response `201 Created`:**
-```json
-{
-  "id": 1,
-  "nome": "Dr. Carlos Lima",
-  "cpf": "987.654.321-00",
-  "email": "carlos@vitalys.com",
-  "telefone": "21988888888",
-  "dataNascimento": "1985-03-22",
-  "idCargo": 2
-}
-```
-
 ---
 
 ### Atendimentos — `/vitalys/atendimentos`
@@ -244,30 +250,18 @@ Authorization: Bearer <token>
 | `PUT` | `/vitalys/atendimentos/{id}` | Atualiza um atendimento |
 | `DELETE` | `/vitalys/atendimentos/{id}` | Cancela um atendimento |
 
-#### Exemplo — Agendar atendimento
+**Exemplo — POST `/vitalys/atendimentos`**
 
-**Request:**
-```http
-POST /vitalys/atendimentos
-Content-Type: application/json
-Authorization: Bearer <token>
-
+```json
 {
   "idPaciente": 1,
   "idProfissional": 1,
-  "dataEHoraMarcadas": "2026-04-25T14:00:00"
+  "dataEHoraMarcadas": "2026-04-25T14:00:00",
+  "tipo": "consulta"
 }
 ```
 
-**Response `201 Created`:**
-```json
-{
-  "id": 1,
-  "nomePaciente": "João Silva",
-  "nomeProfissional": "Dr. Carlos Lima",
-  "dataEHoraMarcadas": "2026-04-25T14:00:00"
-}
-```
+> O campo `tipo` determina a strategy de validação. Valores aceitos: `consulta`, `retorno`.
 
 ---
 
@@ -280,17 +274,6 @@ Authorization: Bearer <token>
 | `PUT` | `/vitalys/cargos/{id}` | Atualiza um cargo |
 | `DELETE` | `/vitalys/cargos/{id}` | Remove um cargo |
 
-#### Exemplo — Listar cargos
-
-**Response `200 OK`:**
-```json
-[
-  { "id": 1, "cargo": "Atendente", "nivelAcesso": "ADMIN" },
-  { "id": 2, "cargo": "Médico", "nivelAcesso": "PROFISSIONAL" },
-  { "id": 3, "cargo": "Fisioterapeuta", "nivelAcesso": "PROFISSIONAL" }
-]
-```
-
 ---
 
 ### Usuários — `/vitalys/usuarios`
@@ -299,6 +282,8 @@ Authorization: Bearer <token>
 |---|---|---|
 | `GET` | `/vitalys/usuarios` | Lista todos os usuários |
 | `POST` | `/vitalys/usuarios` | Cadastra um novo usuário |
+| `PUT` | `/vitalys/usuarios/{id}` | Atualiza um usuário |
+| `DELETE` | `/vitalys/usuarios/{id}` | Remove um usuário |
 
 ---
 
@@ -308,93 +293,83 @@ Authorization: Bearer <token>
 |---|---|---|
 | `GET` | `/vitalys/calendario` | Lista todos os eventos |
 | `POST` | `/vitalys/calendario` | Cadastra um novo evento |
-
-#### Exemplo — Cadastrar evento
-
-**Request:**
-```http
-POST /vitalys/calendario
-Content-Type: application/json
-Authorization: Bearer <token>
-
-{
-  "nome": "Consulta Dr. Carlos",
-  "data": "2026-04-25T10:00:00",
-  "tipo": "ATENDIMENTO"
-}
-```
+| `PUT` | `/vitalys/calendario/{id}` | Atualiza um evento |
+| `DELETE` | `/vitalys/calendario/{id}` | Remove um evento |
 
 ---
 
 ## Estrutura do Projeto
 
 ```
-vitalys-backend/
-├── database/
-│   └── schema.sql                          # Script de criação das tabelas
-├── src/
-│   └── main/
-│       ├── java/com/vitalys/backend/
-│       │   ├── controller/
-│       │   │   ├── AtendimentoController.java
-│       │   │   ├── AuthController.java
-│       │   │   ├── CalendarioController.java
-│       │   │   ├── CargoController.java
-│       │   │   ├── PacienteController.java
-│       │   │   ├── ProfissionalController.java
-│       │   │   └── UsuariosController.java
-│       │   ├── dto/
-│       │   │   ├── AtendimentoRequestDTO.java
-│       │   │   ├── AtendimentoResponseDTO.java
-│       │   │   ├── CalendarioRequestDTO.java
-│       │   │   ├── CalendarioResponseDTO.java
-│       │   │   ├── CargoRequestDTO.java
-│       │   │   ├── CargoResponseDTO.java
-│       │   │   ├── ErrorResponseDTO.java
-│       │   │   ├── LoginRequestDTO.java
-│       │   │   ├── PacienteRequestDTO.java
-│       │   │   ├── PacienteResponseDTO.java
-│       │   │   ├── ProfissionalRequestDTO.java
-│       │   │   ├── ProfissionalResponseDTO.java
-│       │   │   ├── UsuariosRequestDTO.java
-│       │   │   └── UsuariosResponseDTO.java
-│       │   ├── exception/
-│       │   │   ├── BusinessException.java
-│       │   │   ├── ConflictException.java
-│       │   │   ├── GlobalExceptionHandler.java
-│       │   │   └── ResourceNotFoundException.java
-│       │   ├── infra/security/
-│       │   │   ├── SecurityConfig.java
-│       │   │   ├── SecurityFilter.java
-│       │   │   └── TokenService.java
-│       │   ├── model/
-│       │   │   ├── Atendimento.java
-│       │   │   ├── Calendario.java
-│       │   │   ├── Cargo.java
-│       │   │   ├── Paciente.java
-│       │   │   ├── Profissional.java
-│       │   │   └── Usuarios.java
-│       │   ├── repository/
-│       │   │   ├── AtendimentoRepository.java
-│       │   │   ├── CalendarioRepository.java
-│       │   │   ├── CargoRepository.java
-│       │   │   ├── PacienteRepository.java
-│       │   │   ├── ProfissionalRepository.java
-│       │   │   └── UsuariosRepository.java
-│       │   ├── service/
-│       │   │   ├── AtendimentoService.java
-│       │   │   ├── AuthorizationService.java
-│       │   │   ├── CalendarioService.java
-│       │   │   ├── CargoService.java
-│       │   │   ├── PacienteService.java
-│       │   │   ├── ProfissionalService.java
-│       │   │   └── UsuariosService.java
-│       │   ├── CorsConfig.java
-│       │   └── VitalysBackendApplication.java
-│       └── resources/
-│           └── application.properties      # Credenciais locais (não versionado)
-├── docker-compose.yml
-└── pom.xml
+Vitalys/
+├── front-react/                        # Frontend React + TypeScript
+│   ├── public/
+│   ├── src/
+│   │   ├── api/                        # apiFetch, token helpers, getNomeUsuario
+│   │   ├── components/
+│   │   │   ├── modals/
+│   │   │   │   └── ModalAgendamento.tsx
+│   │   │   ├── Agendamentos.tsx
+│   │   │   ├── Calendario.tsx
+│   │   │   ├── ErrorBoundary.tsx
+│   │   │   ├── Header.tsx
+│   │   │   ├── Inicio.tsx
+│   │   │   ├── Modal.tsx
+│   │   │   ├── Pacientes.tsx
+│   │   │   └── Profissionais.tsx
+│   │   ├── contexts/
+│   │   │   ├── AuthContext.tsx
+│   │   │   └── DataContext.tsx
+│   │   ├── pages/
+│   │   │   ├── Dashboard.tsx
+│   │   │   └── Login.tsx
+│   │   ├── types/
+│   │   │   └── index.ts                # Interfaces Paciente, Profissional, Agendamento
+│   │   ├── App.tsx
+│   │   ├── constants.ts                # TOKEN_KEY, THEME_KEY, API
+│   │   ├── main.tsx
+│   │   └── utils.ts
+│   ├── .env.example
+│   ├── tsconfig.json
+│   └── vite.config.js
+│
+└── vitalys-backend/                    # Backend Spring Boot
+    ├── database/
+    │   └── schema.sql
+    ├── src/main/java/com/vitalys/backend/
+    │   ├── controller/
+    │   ├── dto/
+    │   ├── exception/
+    │   │   ├── BusinessException.java
+    │   │   ├── ConflictException.java
+    │   │   ├── GlobalExceptionHandler.java
+    │   │   └── ResourceNotFoundException.java
+    │   ├── infra/
+    │   │   ├── event/
+    │   │   │   ├── AtendimentoCriadoEvent.java
+    │   │   │   └── AtendimentoEventListener.java
+    │   │   └── security/
+    │   │       ├── SecurityConfig.java
+    │   │       ├── SecurityFilter.java
+    │   │       └── TokenService.java
+    │   ├── model/
+    │   ├── repository/
+    │   ├── service/
+    │   │   ├── strategy/
+    │   │   │   ├── AgendamentoStrategy.java
+    │   │   │   ├── ConsultaStrategy.java
+    │   │   │   └── RetornoStrategy.java
+    │   │   ├── AtendimentoService.java
+    │   │   ├── AuthorizationService.java
+    │   │   ├── CalendarioService.java
+    │   │   ├── CargoService.java
+    │   │   ├── PacienteService.java
+    │   │   ├── ProfissionalService.java
+    │   │   └── UsuariosService.java
+    │   ├── CorsConfig.java
+    │   └── VitalysBackendApplication.java
+    ├── docker-compose.yml
+    └── pom.xml
 ```
 
 ---
@@ -410,7 +385,7 @@ vitalys-backend/
 | `cargos` | Tipos de cargo e nível de acesso |
 | `usuarios` | Credenciais de acesso ao sistema |
 | `atendimento` | Agendamentos entre paciente e profissional |
-| `calendario` | Eventos, feriados e atendimentos no calendário |
+| `calendario` | Eventos e atendimentos no calendário |
 
 ### Cargos padrão
 
@@ -426,20 +401,21 @@ vitalys-backend/
 
 ## Roadmap
 
-- [x] Estrutura base do projeto com Spring Boot
-- [x] Banco de dados MySQL via Docker
-- [x] CRUD de pacientes
-- [x] CRUD de profissionais
-- [x] Endpoint de agendamento com retorno de nomes
-- [x] Gestão de cargos
-- [x] Gestão de usuários
-- [x] Calendário de eventos
-- [x] Configuração de CORS para integração com frontend
-- [x] DTOs de entrada e saída como Java Records
+- [x] CRUD completo: pacientes, profissionais, cargos, usuários, atendimentos, calendário
 - [x] Autenticação com Spring Security e JWT
 - [x] Validação de dados com Jakarta Validation
-- [x] Tratamento centralizado de exceções
+- [x] Tratamento centralizado de exceções com `@RestControllerAdvice`
+- [x] DTOs de entrada e saída como Java Records
+- [x] Configuração de CORS para integração com frontend
 - [x] Deploy em produção (Render + Neon + Netlify)
+- [x] Migração do frontend para React 18 + Vite
+- [x] Migração do frontend para TypeScript
+- [x] Variáveis de ambiente no frontend (`VITE_API_URL`)
+- [x] ErrorBoundary no frontend
+- [x] Padrão Builder nas entidades com Lombok
+- [x] Padrão Strategy para tipos de atendimento
+- [x] Padrão Observer com eventos Spring
+- [x] Transações declarativas com `@Transactional`
 
 ---
 

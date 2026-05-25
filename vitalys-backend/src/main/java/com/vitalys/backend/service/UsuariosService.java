@@ -7,6 +7,7 @@ import com.vitalys.backend.exception.ResourceNotFoundException;
 import com.vitalys.backend.model.Usuarios;
 import com.vitalys.backend.repository.UsuariosRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -31,30 +32,39 @@ public class UsuariosService {
         if (profissionalExiste) throw new ConflictException("id do profissional", String.valueOf(dto.idProfissional()));
     }
 
+    @Transactional(readOnly = true)
     public List<UsuariosResponseDTO> findAll() {
         return usuariosRepository.findAll().stream()
                 .map(UsuariosResponseDTO::new)
                 .toList();
     }
 
+    @Transactional
     public UsuariosResponseDTO registrar(UsuariosRequestDTO dto) {
         verificarDadosUnicos(dto, null);
-        Usuarios u = new Usuarios();
-        u.atualizarDados(dto);
+        Usuarios u = Usuarios.builder()
+                .login(dto.login())
+                .senha(dto.senha())
+                .cargo(dto.cargo())
+                .idProfissional(dto.idProfissional())
+                .ativo(dto.ativo())
+                .build();
         return new UsuariosResponseDTO(usuariosRepository.save(u));
     }
 
+    @Transactional
     public UsuariosResponseDTO editar(Long id, UsuariosRequestDTO dto) {
         Usuarios u = usuariosRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário", id));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario", id));
         verificarDadosUnicos(dto, id);
-        u.atualizarDados(dto);
+        u.atualizar(dto);
         return new UsuariosResponseDTO(usuariosRepository.save(u));
     }
 
+    @Transactional
     public void deletar(Long id) {
         Usuarios u = usuariosRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário", id));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario", id));
         usuariosRepository.delete(u);
     }
 }

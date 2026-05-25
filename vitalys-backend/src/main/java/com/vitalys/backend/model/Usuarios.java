@@ -2,20 +2,19 @@ package com.vitalys.backend.model;
 
 import com.vitalys.backend.dto.UsuariosRequestDTO;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "usuarios")
-
-@Getter
-@Setter
 public class Usuarios implements UserDetails {
 
     @Id
@@ -38,7 +37,7 @@ public class Usuarios implements UserDetails {
     @Column(name = "ativo")
     private Boolean ativo;
 
-    public void atualizarDados(UsuariosRequestDTO dto) {
+    public void atualizar(UsuariosRequestDTO dto) {
         this.login = dto.login();
         this.senha = dto.senha();
         this.cargo = dto.cargo();
@@ -52,31 +51,20 @@ public class Usuarios implements UserDetails {
     }
 
     @Override
-    public String getPassword() {
-        return senha;
-    }
+    public String getPassword() { return senha; }
 
     @Override
-    public String getUsername() {
-        return login;
-    }
+    public String getUsername() { return login; }
 
     @Override
-    public boolean isEnabled() {
-        return ativo;
-    }
+    public boolean isEnabled() { return ativo; }
 
     @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
+    public boolean isAccountNonExpired() { return true; }
 
     @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+    public boolean isAccountNonLocked() { return true; }
+
+    @Override
+    public boolean isCredentialsNonExpired() { return true; }
 }
