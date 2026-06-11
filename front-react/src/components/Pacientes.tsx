@@ -103,7 +103,12 @@ function ModalPaciente({ paciente, onClose, onSalvo }: ModalPacienteProps) {
 
   async function salvar(e: React.FormEvent) {
     e.preventDefault();
-    const dados = { ...form, dataNascimento: dataParaBackend(form.dataNascimento) };
+    const dados = {
+      ...form,
+      dataNascimento: dataParaBackend(form.dataNascimento),
+      cpf: form.cpf.replace(/\D/g, ''),
+      telefone: form.telefone.replace(/\D/g, ''),
+    };
     const res = paciente
       ? await apiFetch(`${API}/pacientes/${paciente.id}`, { method: 'PUT', body: JSON.stringify(dados) })
       : await apiFetch(`${API}/pacientes`, { method: 'POST', body: JSON.stringify(dados) });

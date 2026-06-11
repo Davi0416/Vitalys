@@ -98,7 +98,12 @@ function ModalProfissional({ profissional, onClose, onSalvo }: ModalProfissional
 
   async function salvar(e: React.FormEvent) {
     e.preventDefault();
-    const dados = { ...form, dataNascimento: dataParaBackend(form.dataNascimento) };
+    const dados = {
+      ...form,
+      dataNascimento: dataParaBackend(form.dataNascimento),
+      cpf: form.cpf.replace(/\D/g, ''),
+      telefone: form.telefone.replace(/\D/g, ''),
+    };
     const res = profissional
       ? await apiFetch(`${API}/profissionais/${profissional.id}`, { method: 'PUT', body: JSON.stringify(dados) })
       : await apiFetch(`${API}/profissionais`, { method: 'POST', body: JSON.stringify(dados) });
