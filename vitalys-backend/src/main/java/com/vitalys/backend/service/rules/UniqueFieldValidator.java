@@ -1,16 +1,12 @@
 package com.vitalys.backend.service.rules;
 
 import com.vitalys.backend.exception.ConflictException;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 @Component
-@NoArgsConstructor
-@AllArgsConstructor
 public final class UniqueFieldValidator {
 
     public void validar(
