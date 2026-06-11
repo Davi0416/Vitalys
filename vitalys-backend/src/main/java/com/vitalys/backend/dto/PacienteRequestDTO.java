@@ -13,6 +13,6 @@ public record PacienteRequestDTO(
         @NotNull @CPF String cpf,
         @Email @Size(min = 3, max = 60) String email,
         @NotNull Date dataNascimento,
-        @Size(min = 5, max = 100) String  endereco,
-        String telefone) {
+        @Size(min = 5, max = 100) String endereco,
+        @Size(min = 11, max = 11) String telefone) {
 }

@@ -6,35 +6,36 @@ import com.vitalys.backend.exception.ConflictException;
 import com.vitalys.backend.exception.ResourceNotFoundException;
 import com.vitalys.backend.model.Paciente;
 import com.vitalys.backend.repository.PacienteRepository;
+import com.vitalys.backend.service.rules.UniqueFieldValidator;
+import com.vitalys.backend.service.rules.VerificarDataNascimento;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class PacienteService {
 
     private final PacienteRepository pacienteRepository;
-
-    public PacienteService(PacienteRepository pacienteRepository) {
-        this.pacienteRepository = pacienteRepository;
-    }
+    private final UniqueFieldValidator uniqueFieldValidator;
+    private final VerificarDataNascimento verificarDataNascimento;
 
     private void verificarDadosUnicos(PacienteRequestDTO dto, Long idAtual) {
-        boolean cpfExiste = idAtual != null
-                ? pacienteRepository.existsByCpfAndIdNot(dto.cpf(), idAtual)
-                : pacienteRepository.existsByCpf(dto.cpf());
-        if (cpfExiste) throw new ConflictException("CPF", dto.cpf());
+        uniqueFieldValidator.validar("CPF", dto.cpf(), idAtual,
+                () -> pacienteRepository.existsByCpf(dto.cpf()),
+                pacienteRepository::existsByCpfAndIdNot);
 
-        boolean emailExiste = idAtual != null
-                ? pacienteRepository.existsByEmailAndIdNot(dto.email(), idAtual)
-                : pacienteRepository.existsByEmail(dto.email());
-        if (emailExiste) throw new ConflictException("email", dto.email());
+        uniqueFieldValidator.validar("email", dto.email(), idAtual,
+                () -> pacienteRepository.existsByEmail(dto.email()),
+                pacienteRepository::existsByEmailAndIdNot);
 
-        boolean telefoneExiste = idAtual != null
-                ? pacienteRepository.existsByTelefoneAndIdNot(dto.telefone(), idAtual)
-                : pacienteRepository.existsByTelefone(dto.telefone());
-        if (telefoneExiste) throw new ConflictException("telefone", dto.telefone());
+        uniqueFieldValidator.validar("telefone", dto.telefone(), idAtual,
+                () -> pacienteRepository.existsByTelefone(dto.telefone()),
+                pacienteRepository::existsByTelefoneAndIdNot);
     }
 
     @Transactional(readOnly = true)
@@ -47,6 +48,7 @@ public class PacienteService {
     @Transactional
     public PacienteResponseDTO registrar(PacienteRequestDTO dto) {
         verificarDadosUnicos(dto, null);
+        verificarDataNascimento.verificarData(dto.dataNascimento());
         Paciente p = Paciente.builder()
                 .nome(dto.nome())
                 .cpf(dto.cpf())

@@ -2,39 +2,35 @@ package com.vitalys.backend.service;
 
 import com.vitalys.backend.dto.ProfissionalRequestDTO;
 import com.vitalys.backend.dto.ProfissionalResponseDTO;
-import com.vitalys.backend.exception.ConflictException;
 import com.vitalys.backend.exception.ResourceNotFoundException;
 import com.vitalys.backend.model.Profissional;
 import com.vitalys.backend.repository.ProfissionalRepository;
+import com.vitalys.backend.service.rules.UniqueFieldValidator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ProfissionalService {
 
     private final ProfissionalRepository profissionalRepository;
-
-    public ProfissionalService(ProfissionalRepository profissionalRepository) {
-        this.profissionalRepository = profissionalRepository;
-    }
+    private final UniqueFieldValidator uniqueFieldValidator;
 
     private void verificarDadosUnicos(ProfissionalRequestDTO dto, Long idAtual) {
-        boolean cpfExiste = idAtual != null
-                ? profissionalRepository.existsByCpfAndIdNot(dto.cpf(), idAtual)
-                : profissionalRepository.existsByCpf(dto.cpf());
-        if (cpfExiste) throw new ConflictException("CPF", dto.cpf());
+        uniqueFieldValidator.validar("CPF", dto.cpf(), idAtual,
+                () -> profissionalRepository.existsByCpf(dto.cpf()),
+                profissionalRepository::existsByCpfAndIdNot);
 
-        boolean emailExiste = idAtual != null
-                ? profissionalRepository.existsByEmailAndIdNot(dto.email(), idAtual)
-                : profissionalRepository.existsByEmail(dto.email());
-        if (emailExiste) throw new ConflictException("email", dto.email());
+        uniqueFieldValidator.validar("email", dto.email(), idAtual,
+                () -> profissionalRepository.existsByEmail(dto.email()),
+                profissionalRepository::existsByEmailAndIdNot);
 
-        boolean telefoneExiste = idAtual != null
-                ? profissionalRepository.existsByTelefoneAndIdNot(dto.telefone(), idAtual)
-                : profissionalRepository.existsByTelefone(dto.telefone());
-        if (telefoneExiste) throw new ConflictException("telefone", dto.telefone());
+        uniqueFieldValidator.validar("telefone", dto.telefone(), idAtual,
+                () -> profissionalRepository.existsByTelefone(dto.telefone()),
+                profissionalRepository::existsByTelefoneAndIdNot);
     }
 
     @Transactional(readOnly = true)
