@@ -9,6 +9,8 @@ import com.vitalys.backend.repository.PacienteRepository;
 import com.vitalys.backend.service.rules.UniqueFieldValidator;
 import com.vitalys.backend.service.rules.VerificarDataNascimento;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +40,7 @@ public class PacienteService {
                 pacienteRepository::existsByTelefoneAndIdNot);
     }
 
+    @Cacheable("pacientes")
     @Transactional(readOnly = true)
     public List<PacienteResponseDTO> findAll() {
         return pacienteRepository.findAll().stream()
@@ -45,6 +48,7 @@ public class PacienteService {
                 .toList();
     }
 
+    @CacheEvict(value = "pacientes", allEntries = true)
     @Transactional
     public PacienteResponseDTO registrar(PacienteRequestDTO dto) {
         verificarDadosUnicos(dto, null);
@@ -60,6 +64,7 @@ public class PacienteService {
         return new PacienteResponseDTO(pacienteRepository.save(p));
     }
 
+    @CacheEvict(value = "pacientes", allEntries = true)
     @Transactional
     public PacienteResponseDTO editar(Long id, PacienteRequestDTO dto) {
         Paciente p = pacienteRepository.findById(id)
@@ -69,6 +74,7 @@ public class PacienteService {
         return new PacienteResponseDTO(pacienteRepository.save(p));
     }
 
+    @CacheEvict(value = "pacientes", allEntries = true)
     @Transactional
     public void deletar(Long id) {
         Paciente p = pacienteRepository.findById(id)

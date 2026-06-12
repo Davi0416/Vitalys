@@ -5,6 +5,8 @@ import com.vitalys.backend.dto.CargoResponseDTO;
 import com.vitalys.backend.exception.ResourceNotFoundException;
 import com.vitalys.backend.model.Cargo;
 import com.vitalys.backend.repository.CargoRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,7 @@ public class CargoService {
         this.cargoRepository = cargoRepository;
     }
 
+    @Cacheable("cargos")
     @Transactional(readOnly = true)
     public List<CargoResponseDTO> findAll() {
         return cargoRepository.findAll().stream()
@@ -26,6 +29,7 @@ public class CargoService {
                 .toList();
     }
 
+    @CacheEvict(value = "cargos", allEntries = true)
     @Transactional
     public CargoResponseDTO registrar(CargoRequestDTO dto) {
         Cargo cargo = Cargo.builder()
@@ -35,6 +39,7 @@ public class CargoService {
         return new CargoResponseDTO(cargoRepository.save(cargo));
     }
 
+    @CacheEvict(value = "cargos", allEntries = true)
     @Transactional
     public CargoResponseDTO editar(Long id, CargoRequestDTO dto) {
         Cargo existente = cargoRepository.findById(id)
@@ -43,6 +48,7 @@ public class CargoService {
         return new CargoResponseDTO(cargoRepository.save(existente));
     }
 
+    @CacheEvict(value = "cargos", allEntries = true)
     @Transactional
     public void deletar(Long id) {
         Cargo existente = cargoRepository.findById(id)

@@ -7,6 +7,8 @@ import com.vitalys.backend.model.Profissional;
 import com.vitalys.backend.repository.ProfissionalRepository;
 import com.vitalys.backend.service.rules.UniqueFieldValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +35,7 @@ public class ProfissionalService {
                 profissionalRepository::existsByTelefoneAndIdNot);
     }
 
+    @Cacheable("profissionais")
     @Transactional(readOnly = true)
     public List<ProfissionalResponseDTO> findAll() {
         return profissionalRepository.findAll().stream()
@@ -40,6 +43,7 @@ public class ProfissionalService {
                 .toList();
     }
 
+    @CacheEvict(value = "profissionais", allEntries = true)
     @Transactional
     public ProfissionalResponseDTO registrar(ProfissionalRequestDTO dto) {
         verificarDadosUnicos(dto, null);
@@ -53,6 +57,7 @@ public class ProfissionalService {
         return new ProfissionalResponseDTO(profissionalRepository.save(p));
     }
 
+    @CacheEvict(value = "profissionais", allEntries = true)
     @Transactional
     public ProfissionalResponseDTO editar(Long id, ProfissionalRequestDTO dto) {
         Profissional p = profissionalRepository.findById(id)
@@ -62,6 +67,7 @@ public class ProfissionalService {
         return new ProfissionalResponseDTO(profissionalRepository.save(p));
     }
 
+    @CacheEvict(value = "profissionais", allEntries = true)
     @Transactional
     public void deletar(Long id) {
         Profissional p = profissionalRepository.findById(id)
